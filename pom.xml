@@ -7,9 +7,9 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../codemucker-parent/pom.xml</relativePath>
     </parent>
-    <artifactId>codemucker-match</artifactId>
+    <artifactId>codemucker-jmatch</artifactId>
     <packaging>jar</packaging>
-    <name>com.codemucker - Matchers</name>
+    <name>com.codemucker - JMatch</name>
     <description>Matchers</description>
     
     <dependencies>
