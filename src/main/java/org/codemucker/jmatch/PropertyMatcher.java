@@ -51,7 +51,7 @@ public class PropertyMatcher<T> extends AbstractMatcher<T> {
 		return true;
 	}
 	
-	protected <TProperty> void withProperty(String propertyName, Matcher<TProperty> matcher){
+	protected <TProperty> void withProperty(String propertyName, Class<TProperty> expectedPropertyType, Matcher<TProperty> matcher){
 		Method getter = getGetterOrNull("get" + firstToUpper(propertyName));
 		if( getter == null ){
 			getter = getGetterOrNull(propertyName);	
@@ -61,13 +61,12 @@ public class PropertyMatcher<T> extends AbstractMatcher<T> {
 			throw new MatchRuntimeException("Couldn't find getter method '" + propertyName + "' on class '" + beanClass.getName() + "'. Tried with and with 'get' prefixed");
 		}
 		//check property type is the same as matcher
-		Class<?> matcherType = (Class<?>) ((ParameterizedType) matcher.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
-        Class<?> propertyType = getter.getReturnType();
+		Class<?> actualPropertyType = getter.getReturnType();
 		
-		if(!matcherType.isAssignableFrom(propertyType)){
+		if(!expectedPropertyType.isAssignableFrom(actualPropertyType)){
 			//the check above doesn't take into account auto boxing
-			if(autoBoxedConversions.get(propertyType) != matcherType){
-				throw new IllegalArgumentException(String.format("property type (%s) and matcher type (%s) don't match for property '%s' on %s", propertyType,matcherType,propertyName, beanClass.getName()));
+			if(autoBoxedConversions.get(actualPropertyType) != expectedPropertyType){
+				throw new IllegalArgumentException(String.format("property type (%s) and matcher type (%s) don't match for property '%s' on %s", actualPropertyType,expectedPropertyType,propertyName, beanClass.getName()));
 			}
 		}
 		matchers.add(new PropertyValueMatcher<TProperty>(getter, matcher));
