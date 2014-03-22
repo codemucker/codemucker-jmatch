@@ -44,6 +44,27 @@ public class AString {
 		};
 	}
 
+	public static final Matcher<String> equalToIgnoreCase(final String expect){
+		return new AbstractMatcher<String>(AllowNulls.YES){ 
+			@Override
+			public boolean matchesSafely(String found, MatchDiagnostics ctxt) {
+				if( expect == null && found == null){
+					return true;
+				}
+				if( expect == null || found == null){
+					return false;
+				}
+				return expect.equalsIgnoreCase(found);
+			}
+			
+			@Override
+			public void describeTo(Description desc) {
+				super.describeTo(desc);
+				desc.text("a string equal to '%s' ignoring case", expect);
+			}
+		};
+	}
+	
 	public static final Matcher<String> notEmpty(){
 		return new AbstractNotNullMatcher<String>(){ 
 			@Override
