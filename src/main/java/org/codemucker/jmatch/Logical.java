@@ -1,6 +1,6 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
-import org.codemucker.match.AbstractMatcher.AllowNulls;
+import org.codemucker.jmatch.AbstractMatcher.AllowNulls;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;

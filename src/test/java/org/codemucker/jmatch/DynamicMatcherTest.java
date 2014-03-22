@@ -1,5 +1,8 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
+import org.codemucker.jmatch.AString;
+import org.codemucker.jmatch.AnInt;
+import org.codemucker.jmatch.PropertyMatcher;
 import org.junit.Test;
 
 

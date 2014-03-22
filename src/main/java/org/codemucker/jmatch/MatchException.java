@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 public class MatchException  extends RuntimeException {
 

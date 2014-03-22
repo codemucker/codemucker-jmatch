@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

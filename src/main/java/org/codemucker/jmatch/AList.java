@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.codemucker.jmatch.Description;
+import org.codemucker.jmatch.Matcher;
 import org.codemucker.lang.annotation.ThreadSafe;
-import org.codemucker.match.Description;
-import org.codemucker.match.Matcher;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 public abstract class AbstractNotNullMatcher<T> extends AbstractMatcher<T> {
 	

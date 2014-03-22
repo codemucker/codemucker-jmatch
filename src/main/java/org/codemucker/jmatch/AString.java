@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.codemucker.match.Description;
-import org.codemucker.match.MatchDiagnostics;
-import org.codemucker.match.Matcher;
-import org.codemucker.match.AbstractMatcher.AllowNulls;
+import org.codemucker.jmatch.Description;
+import org.codemucker.jmatch.MatchDiagnostics;
+import org.codemucker.jmatch.Matcher;
+import org.codemucker.jmatch.AbstractMatcher.AllowNulls;
 
 public class AString {
 

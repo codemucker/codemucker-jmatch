@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertFalse;
@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
-import org.codemucker.match.AList;
-import org.codemucker.match.AnInstance;
-import org.codemucker.match.Matcher;
+import org.codemucker.jmatch.AList;
+import org.codemucker.jmatch.AnInstance;
+import org.codemucker.jmatch.Matcher;
 import org.junit.Test;
 
 public class AListTest {

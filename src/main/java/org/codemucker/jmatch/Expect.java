@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 
 public class Expect {
@@ -17,6 +17,10 @@ public class Expect {
 		
 		private ExpectAsserter(T actual){
 			this.actual = actual;
+		}
+		
+		public void isEqualTo(T expect){
+			is(AnInstance.equalTo(expect));
 		}
 		
 		public void is(Matcher<? super T> matcher){

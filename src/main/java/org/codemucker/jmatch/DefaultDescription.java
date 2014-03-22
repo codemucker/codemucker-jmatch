@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 import java.util.Iterator;
 import java.util.Stack;

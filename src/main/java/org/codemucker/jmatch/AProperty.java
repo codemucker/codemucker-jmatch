@@ -1,11 +1,11 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.codemucker.match.Description;
-import org.codemucker.match.MatchException;
-import org.codemucker.match.Matcher;
+import org.codemucker.jmatch.Description;
+import org.codemucker.jmatch.MatchException;
+import org.codemucker.jmatch.Matcher;
 
 import com.google.common.base.Preconditions;
 

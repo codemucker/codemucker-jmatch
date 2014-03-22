@@ -1,7 +1,14 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
+import org.codemucker.jmatch.AString;
+import org.codemucker.jmatch.DefaultDescription;
+import org.codemucker.jmatch.DefaultMatchContext;
+import org.codemucker.jmatch.MatchDiagnostics;
+import org.codemucker.jmatch.Matcher;
+import org.codemucker.jmatch.NullMatchContext;
 import org.junit.Test;
-import static org.codemucker.match.Assert.*;
+
+import static org.codemucker.jmatch.Assert.*;
 
 public class AStringTest {
 

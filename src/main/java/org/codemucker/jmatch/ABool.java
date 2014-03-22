@@ -1,9 +1,9 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
-import org.codemucker.match.AbstractMatcher.AllowNulls;
-import org.codemucker.match.Description;
-import org.codemucker.match.MatchDiagnostics;
-import org.codemucker.match.Matcher;
+import org.codemucker.jmatch.Description;
+import org.codemucker.jmatch.MatchDiagnostics;
+import org.codemucker.jmatch.Matcher;
+import org.codemucker.jmatch.AbstractMatcher.AllowNulls;
 
 public class ABool {
 

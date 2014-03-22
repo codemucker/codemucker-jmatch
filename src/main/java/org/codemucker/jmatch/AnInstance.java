@@ -1,4 +1,4 @@
-package org.codemucker.match;
+package org.codemucker.jmatch;
 
 import static org.apache.commons.lang3.Validate.notNull;
 
@@ -8,13 +8,12 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.codemucker.match.AbstractMatcher.AllowNulls;
-import org.codemucker.match.Description;
-import org.codemucker.match.Matcher;
+import org.codemucker.jmatch.Description;
+import org.codemucker.jmatch.Matcher;
+import org.codemucker.jmatch.AbstractMatcher.AllowNulls;
 
 public final class AnInstance {
 
-	@SafeVarargs
 	public static final <T> List<Matcher<T>> equalToAll(final T... expectAll) {
 		List<Matcher<T>> matchers = new ArrayList<Matcher<T>>(expectAll.length);
 		for (int i = 0; i < expectAll.length; i++) {
@@ -23,6 +22,10 @@ public final class AnInstance {
 		return matchers;
 	}
 
+	public static final <T> Matcher<T> equalToNull() {	
+		return equalTo(null);
+	}
+	
 	public static final <T> Matcher<T> equalTo(final T expect) {
 		return new AbstractMatcher<T>(AllowNulls.YES) {
 			@Override
