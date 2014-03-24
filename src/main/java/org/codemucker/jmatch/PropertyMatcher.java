@@ -2,18 +2,14 @@ package org.codemucker.jmatch;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class PropertyMatcher<T> extends AbstractMatcher<T> {
+public class PropertyMatcher<T> extends ObjectMatcher<T> {
 
 	private static final Object[] NoArgs = new Object[]{};
 	
 	private final Class<T> beanClass;
-	private final List<Matcher<T>> matchers = new ArrayList<>();
 	
 	private static final Map<Class<?>,Class<?>> autoBoxedConversions = new HashMap<>();
 	
@@ -37,18 +33,7 @@ public class PropertyMatcher<T> extends AbstractMatcher<T> {
 	 * @param beanClass the class this matcher is for
 	 */
 	public PropertyMatcher(Class<T> beanClass){
-		super(AllowNulls.NO);
 		this.beanClass = beanClass;
-	}
-
-	@Override
-	public boolean matchesSafely(T actual, MatchDiagnostics ctxt) {
-		for(Matcher<T> matcher : matchers){
-			if(!ctxt.TryMatch(actual, matcher)){
-				return false;
-			}
-		}
-		return true;
 	}
 	
 	protected <TProperty> void withProperty(String propertyName, Class<TProperty> expectedPropertyType, Matcher<TProperty> matcher){
@@ -69,7 +54,7 @@ public class PropertyMatcher<T> extends AbstractMatcher<T> {
 				throw new IllegalArgumentException(String.format("property type (%s) and matcher type (%s) don't match for property '%s' on %s", actualPropertyType,expectedPropertyType,propertyName, beanClass.getName()));
 			}
 		}
-		matchers.add(new PropertyValueMatcher<TProperty>(getter, matcher));
+		withMatcher(new PropertyValueMatcher<TProperty>(getter, matcher));
 	}
 	
 	private Method getGetterOrNull(String methodName){
