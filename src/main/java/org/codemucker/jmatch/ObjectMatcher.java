@@ -3,6 +3,8 @@ package org.codemucker.jmatch;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Predicate;
+
 public class ObjectMatcher<T> extends AbstractMatcher<T> {
 
 	private final List<Matcher<T>> matchers = new ArrayList<>();
@@ -21,8 +23,22 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 		}
 		return true;
 	}
+
+	/**
+	 * Match on the given types predicate
+	 * 
+	 * E.g
+	 * 
+	 * AFoo.with().type(f=>f.getName()=="Alice" || f.getName()=="Bob")
+	 * @param predicate
+	 * @return
+	 */
+	protected void predicate(Predicate<T> predicate){
+		addMatcher(PredicateToMatcher.from(predicate));
+	}
 	
-	protected void withMatcher(Matcher<T> matcher){
+	protected void addMatcher(Matcher<T> matcher){
 		matchers.add(matcher);
 	}
+	
 }

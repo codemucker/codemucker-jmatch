@@ -23,6 +23,15 @@ public class AString {
 		return matchers;
 	}
 	
+	public static final Matcher<String> equalToAny(final String expect, final String... orExpect){
+		List<Matcher<String>> matchers = new ArrayList<>(orExpect.length +1);
+		matchers.add(equalTo(expect));
+		for (int i = 0; i < orExpect.length; i++) {
+			matchers.add(equalTo(orExpect[i]));
+		}
+		return Logical.any(matchers);
+	}
+	
 	public static final Matcher<String> equalTo(final String expect){
 		return new AbstractMatcher<String>(AllowNulls.YES){ 
 			@Override

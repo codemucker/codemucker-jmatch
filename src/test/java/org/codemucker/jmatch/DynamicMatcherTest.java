@@ -12,8 +12,8 @@ public class DynamicMatcherTest {
 	public void Match(){
 		PropertyMatcher<TestBean> matcher = new PropertyMatcher<>(TestBean.class);
 		
-		matcher.withProperty("stringProp", String.class, AString.equalTo("mystring"));
-		matcher.withProperty("intProp", int.class, AnInt.equalTo(5));
+		matcher.addMatchProperty("stringProp", String.class, AString.equalTo("mystring"));
+		matcher.addMatchProperty("intProp", int.class, AnInt.equalTo(5));
 		
 		TestBean bean = new TestBean();
 		bean.setStringProp("mystring");
@@ -26,7 +26,7 @@ public class DynamicMatcherTest {
 	public void DontMatch(){
 		PropertyMatcher<TestBean> matcher = new PropertyMatcher<>(TestBean.class);
 		
-		matcher.withProperty("stringProp", String.class, AString.equalTo("otherstring"));
+		matcher.addMatchProperty("stringProp", String.class, AString.equalTo("otherstring"));
 		
 		TestBean bean = new TestBean();
 		bean.setStringProp("mystring");

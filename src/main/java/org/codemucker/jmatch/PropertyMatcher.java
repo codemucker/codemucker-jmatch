@@ -36,7 +36,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 		this.beanClass = beanClass;
 	}
 	
-	protected <TProperty> void withProperty(String propertyName, Class<TProperty> expectedPropertyType, Matcher<TProperty> matcher){
+	protected <TProperty> void addMatchProperty(String propertyName, Class<TProperty> expectedPropertyType, Matcher<TProperty> matcher){
 		Method getter = getGetterOrNull("get" + firstToUpper(propertyName));
 		if( getter == null ){
 			getter = getGetterOrNull(propertyName);	
@@ -54,7 +54,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 				throw new IllegalArgumentException(String.format("property type (%s) and matcher type (%s) don't match for property '%s' on %s", actualPropertyType,expectedPropertyType,propertyName, beanClass.getName()));
 			}
 		}
-		withMatcher(new PropertyValueMatcher<TProperty>(getter, matcher));
+		addMatcher(new PropertyValueMatcher<TProperty>(getter, matcher));
 	}
 	
 	private Method getGetterOrNull(String methodName){
