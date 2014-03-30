@@ -360,8 +360,9 @@ public class AList {
 	    @Override
 	    public void describeTo(final Description desc) {
 	        desc.value("contains", contains.toString().toLowerCase());
-	        desc.value( "order ", order.toString().toLowerCase());
+	        desc.value( "order", order.toString().toLowerCase());
 	        desc.values("items", matchers);
+	        
 	    }
 	}
 }

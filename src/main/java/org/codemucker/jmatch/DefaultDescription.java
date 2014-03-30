@@ -151,7 +151,10 @@ public class DefaultDescription implements Description {
 	}
 	
 	private void appendVal(Object val){
-		if( val instanceof SelfDescribing){
+		if( val == this){
+			return;
+		}
+		if( val instanceof SelfDescribing){	
 			appendLine();
 			((SelfDescribing)val).describeTo(this);
 		} else {
@@ -183,7 +186,7 @@ public class DefaultDescription implements Description {
 	public void describeTo(Description desc) {
 		if (desc != this)//prevent accidental self recursion
         {
-            appendVal(desc);
+            desc.text(toString());
         } 
 	}
 	
