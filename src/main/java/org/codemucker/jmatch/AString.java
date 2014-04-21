@@ -23,6 +23,16 @@ public class AString {
 		return matchers;
 	}
 	
+	public static final Matcher<String> matchingAnyAntPattern(final String antPattern, final String... orOtherAntPatterns){
+		List<Matcher<String>> matchers = new ArrayList<>(orOtherAntPatterns.length +1);
+		matchers.add(equalTo(antPattern));
+		for (int i = 0; i < orOtherAntPatterns.length; i++) {
+			matchers.add(matchingAntPattern(orOtherAntPatterns[i]));
+		}
+		return Logical.any(matchers);
+	}
+	
+	
 	public static final Matcher<String> equalToAny(final String expect, final String... orExpect){
 		List<Matcher<String>> matchers = new ArrayList<>(orExpect.length +1);
 		matchers.add(equalTo(expect));
@@ -245,15 +255,15 @@ public class AString {
 		};
 	}
 	
-	public static Matcher<String> withAntPattern(String antExpression){
+	public static Matcher<String> matchingAntPattern(String antExpression){
 		return new RegExpPatternMatcher(antExpToPattern(antExpression));
 	}
 	
-	public static Matcher<String> withPattern(String pattern){
+	public static Matcher<String> matchingRegex(String pattern){
 		return new RegExpPatternMatcher(Pattern.compile(pattern));
 	}
 	
-	public static Matcher<String> withPattern(Pattern pattern){
+	public static Matcher<String> matchingRegex(Pattern pattern){
 		return new RegExpPatternMatcher(pattern);
 	}
 	
@@ -267,7 +277,7 @@ public class AString {
 	/**
 	 * Convert an ant regular expression to a standard java pattern expression
 	 */
-	public static String antExpToPatternExp(String antPattern) {
+	private static String antExpToPatternExp(String antPattern) {
     	StringBuilder sb = new StringBuilder();
     	for (int i = 0; i < antPattern.length(); i++) {
     		char c = antPattern.charAt(i);

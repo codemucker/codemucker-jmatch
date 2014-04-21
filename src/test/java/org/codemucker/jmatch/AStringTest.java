@@ -14,17 +14,17 @@ public class AStringTest {
 
 	@Test
 	public void testAntPattern(){
-		assertNotThat(null,is(AString.withAntPattern("")));
-		assertThat("",is(AString.withAntPattern("")));
+		assertNotThat(null,is(AString.matchingAntPattern("")));
+		assertThat("",is(AString.matchingAntPattern("")));
 		
-		assertNotThat(null,is(AString.withAntPattern("*a?")));
-		assertNotThat("",is(AString.withAntPattern("*a?")));
-		assertThat("a",is(AString.withAntPattern("*a?")));
-		assertThat("aaa",is(AString.withAntPattern("*a?")));
-		assertThat("xax",is(AString.withAntPattern("*a?")));
-		assertThat("xxax",is(AString.withAntPattern("*a?")));
-		assertThat("xxa",is(AString.withAntPattern("*a?")));
-		assertNotThat("xxb",is(AString.withAntPattern("*a?")));
+		assertNotThat(null,is(AString.matchingAntPattern("*a?")));
+		assertNotThat("",is(AString.matchingAntPattern("*a?")));
+		assertThat("a",is(AString.matchingAntPattern("*a?")));
+		assertThat("aaa",is(AString.matchingAntPattern("*a?")));
+		assertThat("xax",is(AString.matchingAntPattern("*a?")));
+		assertThat("xxax",is(AString.matchingAntPattern("*a?")));
+		assertThat("xxa",is(AString.matchingAntPattern("*a?")));
+		assertNotThat("xxb",is(AString.matchingAntPattern("*a?")));
 		
 	}
 	
