@@ -19,13 +19,14 @@ public class AStringTest {
 		
 		assertNotThat(null,is(AString.matchingAntPattern("*a?")));
 		assertNotThat("",is(AString.matchingAntPattern("*a?")));
-		assertThat("a",is(AString.matchingAntPattern("*a?")));
+		assertThat("a",is(AString.matchingAntPattern("?")));
+		assertThat("ax",is(AString.matchingAntPattern("*a?")));
 		assertThat("aaa",is(AString.matchingAntPattern("*a?")));
 		assertThat("xax",is(AString.matchingAntPattern("*a?")));
 		assertThat("xxax",is(AString.matchingAntPattern("*a?")));
-		assertThat("xxa",is(AString.matchingAntPattern("*a?")));
+		assertThat("xxaxx",is(AString.matchingAntPattern("*a?*")));
+		assertNotThat("xxa",is(AString.matchingAntPattern("*a?")));
 		assertNotThat("xxb",is(AString.matchingAntPattern("*a?")));
-		
 	}
 	
 	public static <T> void assertNotThat(T actual,Matcher<T> matcher){

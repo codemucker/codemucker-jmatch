@@ -286,7 +286,7 @@ public class AString {
     		} else if (c == '*') {
     			sb.append(".*");
     		} else if (c == '?') {
-    			sb.append(".?");
+    			sb.append(".{1}");
     		} else {
     			sb.append(c);
     		}
