@@ -2,14 +2,16 @@ package org.codemucker.jmatch;
 
 public interface MatchDiagnostics extends Description {
 	
-	<T> boolean TryMatch(T actual, Matcher<T> matcher);
+	public <T> boolean tryMatch(SelfDescribing parent,T actual, Matcher<T> matcher);
 	
-	public MatchDiagnostics Matched(String text, Object... args);
+	public MatchDiagnostics matched(String text, Object... args);
 	
-    public MatchDiagnostics MisMatched(String text, Object... args);
+    public MatchDiagnostics mismatched(String text, Object... args);
 
-    public MatchDiagnostics Matched(SelfDescribing selfDescribing);
+    public MatchDiagnostics matched(SelfDescribing selfDescribing);
 
-    public MatchDiagnostics MisMatched(SelfDescribing selfDescribing);
+    public MatchDiagnostics mismatched(SelfDescribing selfDescribing);
+    
+    public MatchDiagnostics newChild();
     
 }

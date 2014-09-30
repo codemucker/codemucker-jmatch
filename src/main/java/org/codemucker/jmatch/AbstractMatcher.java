@@ -29,7 +29,7 @@ public abstract class AbstractMatcher<T> implements Matcher<T> {
 	@Override
 	public final boolean matches(T actual, MatchDiagnostics diag){
 		if( actual == null && allowNulls == AllowNulls.NO){
-			diag.MisMatched("expect not null");
+			diag.mismatched("expect not null");
 			return false;
 		}
 		return matchesSafely(actual, diag);
@@ -46,10 +46,13 @@ public abstract class AbstractMatcher<T> implements Matcher<T> {
 	
 	/**
 	 * Subclasses should override this if they want to provide a
-	 * description. Rmemeber to call this parent
+	 * description. Remember to call this parent
 	 */
 	@Override
 	public void describeTo(Description desc) {
+	    if( desc.isNull()){
+	        return;
+	    }
 		if(allowNulls == AllowNulls.NO){
 			desc.text("not null");
 		}

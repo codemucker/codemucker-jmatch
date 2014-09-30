@@ -5,27 +5,32 @@ public class NullMatchContext extends NullDescription implements MatchDiagnostic
 	public static final MatchDiagnostics INSTANCE = new NullMatchContext();
 	
 	@Override
-	public <T> boolean TryMatch(T actual, Matcher<T> matcher) {
+	public <T> boolean tryMatch(SelfDescribing parent,T actual, Matcher<T> matcher) {
 		return matcher.matches(actual, this);
 	}
 
 	@Override
-	public MatchDiagnostics Matched(String text, Object... args) {
+	public MatchDiagnostics matched(String text, Object... args) {
 		return this;
 	}
 
 	@Override
-	public MatchDiagnostics MisMatched(String text, Object... args) {
+	public MatchDiagnostics mismatched(String text, Object... args) {
 		return this;
 	}
 
 	@Override
-	public MatchDiagnostics Matched(SelfDescribing selfDescribing) {
+	public MatchDiagnostics matched(SelfDescribing selfDescribing) {
 		return this;
 	}
 
 	@Override
-	public MatchDiagnostics MisMatched(SelfDescribing selfDescribing) {
+	public MatchDiagnostics mismatched(SelfDescribing selfDescribing) {
 		return this;
 	}
+
+    @Override
+    public MatchDiagnostics newChild() {
+        return this;
+    }
 }

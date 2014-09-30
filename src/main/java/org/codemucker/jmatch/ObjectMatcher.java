@@ -5,19 +5,30 @@ import java.util.List;
 
 import com.google.common.base.Predicate;
 
+/***
+ * Matcher to collect a list of matchers for a given object type
+ *
+ * @param <T>
+ */
 public class ObjectMatcher<T> extends AbstractMatcher<T> {
 
 	private final List<Matcher<T>> matchers = new ArrayList<>();
-
-	public ObjectMatcher(){
+	private final Class<T> expectType;
+	
+	public ObjectMatcher(Class expectType){
 		super(AllowNulls.NO);
+		this.expectType = expectType;
+	}
+	
+	protected Class<T> getExpectType(){
+	    return expectType;
 	}
 
 	@Override
 	public boolean matchesSafely(T actual, MatchDiagnostics ctxt) {
 		//TODO:could turn straight into array
 		for(Matcher<T> matcher : matchers){
-			if(!ctxt.TryMatch(actual, matcher)){
+			if(!ctxt.tryMatch(this, actual, matcher)){
 				return false;
 			}
 		}
@@ -41,4 +52,15 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 		matchers.add(matcher);
 	}
 	
+	@Override
+	public void describeTo(Description desc) {
+	    if(desc.isNull()){
+	        return;
+	    }
+	    super.describeTo(desc);
+	    desc.text("of type " + expectType.getName());
+	    for(Matcher<T> matcher : matchers){
+	        desc.value(matcher);
+	    }
+	}
 }

@@ -9,8 +9,6 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 
 	private static final Object[] NoArgs = new Object[]{};
 	
-	private final Class<T> beanClass;
-	
 	private static final Map<Class<?>,Class<?>> autoBoxedConversions = new HashMap<>();
 	
 	static {
@@ -33,7 +31,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 	 * @param beanClass the class this matcher is for
 	 */
 	public PropertyMatcher(Class<T> beanClass){
-		this.beanClass = beanClass;
+	    super(beanClass);
 	}
 	
 	protected <TProperty> void addMatchProperty(String propertyName, Class<TProperty> expectedPropertyType, Matcher<TProperty> matcher){
@@ -43,7 +41,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 		}
 		
 		if( getter == null){
-			throw new MatchRuntimeException("Couldn't find getter method '" + propertyName + "' on class '" + beanClass.getName() + "'. Tried with and with 'get' prefixed");
+			throw new MatchRuntimeException("Couldn't find getter method '" + propertyName + "' on class '" + getExpectType().getName() + "'. Tried with and with 'get' prefixed");
 		}
 		//check property type is the same as matcher
 		Class<?> actualPropertyType = getter.getReturnType();
@@ -51,7 +49,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 		if(!expectedPropertyType.isAssignableFrom(actualPropertyType)){
 			//the check above doesn't take into account auto boxing
 			if(autoBoxedConversions.get(actualPropertyType) != expectedPropertyType){
-				throw new IllegalArgumentException(String.format("property type (%s) and matcher type (%s) don't match for property '%s' on %s", actualPropertyType,expectedPropertyType,propertyName, beanClass.getName()));
+				throw new IllegalArgumentException(String.format("property type (%s) and matcher type (%s) don't match for property '%s' on %s", actualPropertyType,expectedPropertyType,propertyName, getExpectType().getName()));
 			}
 		}
 		addMatcher(new PropertyValueMatcher<TProperty>(getter, matcher));
@@ -59,7 +57,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 	
 	private Method getGetterOrNull(String methodName){
 		try {
-			return beanClass.getMethod(methodName, (Class<?>[])null);
+			return getExpectType().getMethod(methodName, (Class<?>[])null);
 		} catch(NoSuchMethodException e){
 			return null;
 		}
@@ -88,16 +86,20 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 			try {
 				propertyVal = (TProperty)getterMethod.invoke(actual, NoArgs);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				ctxt.MisMatched(DefaultDescription.with().value("propertyGetterException", e));
+				ctxt.mismatched(DefaultDescription.with().value("propertyGetterException", e));
 				return false;
 			} catch(ClassCastException e){//shouldn't happen
-				ctxt.MisMatched(DefaultDescription.with().value("propertyGetterException", e));
+				ctxt.mismatched(DefaultDescription.with().value("propertyGetterException", e));
 				return false;
 			}
-			if(!ctxt.TryMatch(propertyVal, matcher)){
-				return false;
-			}
-			return true;
+			return ctxt.tryMatch(this,propertyVal, matcher);
 		}
+		
+		@Override
+	    public void describeTo(Description desc) {
+	        desc.value(getterMethod.getName() + "() is", matcher);
+	    }
 	}
+	
+	
 }

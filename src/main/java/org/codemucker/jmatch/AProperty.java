@@ -3,10 +3,6 @@ package org.codemucker.jmatch;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.codemucker.jmatch.Description;
-import org.codemucker.jmatch.MatchException;
-import org.codemucker.jmatch.Matcher;
-
 import com.google.common.base.Preconditions;
 
 public class AProperty {
@@ -99,11 +95,11 @@ public class AProperty {
 					Object propertyVal = getterMethod.invoke(actual, EMPTY_ARGS);
 					return propertyMatcher.matches(propertyVal);
 				} catch (IllegalAccessException e) {
-					throw new MatchException("error invoking getter",e);
+					throw new MatchRuntimeException("error invoking getter",e);
 				} catch (IllegalArgumentException e) {
-					throw new MatchException("error invoking getter",e);
+					throw new MatchRuntimeException("error invoking getter",e);
 				} catch (InvocationTargetException e) {
-					throw new MatchException("error invoking getter",e);
+					throw new MatchRuntimeException("error invoking getter",e);
 				}
 			}
 			

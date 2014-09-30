@@ -42,6 +42,10 @@ public class AString {
 		return Logical.any(matchers);
 	}
 	
+	public static final Matcher<String> equalToNull(){
+	    return equalTo(null);
+	}
+	
 	public static final Matcher<String> equalTo(final String expect){
 		return new AbstractMatcher<String>(AllowNulls.YES){ 
 			@Override

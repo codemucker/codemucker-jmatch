@@ -10,13 +10,14 @@ public interface Description extends SelfDescribing {
 	
 	Description value(String label, Object value);
 	Description values(String label, Iterable<?> values);
-	Description child(Object child);
+	Description value(Object value);
+    Description child(Object child);
 	Description child(String label,Object child);
 	
 	/**
-	 * Return whether this is a null description. That is, a descroption which ignores all input
+	 * Return whether this is a null description. That is, a description which ignores all input
 	 * @return
 	 */
 	boolean isNull();
-	
+    
 }

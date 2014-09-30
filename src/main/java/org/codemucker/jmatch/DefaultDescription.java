@@ -7,7 +7,8 @@ public class DefaultDescription implements Description {
 
 	private final StringBuilder sb = new StringBuilder();
 	private boolean requireNewLine = false;
-	private static final String NL = System.clearProperty("line.separator");
+	private static final String NL = System.getProperty("line.separator");
+
 	private static final String INDENT = "    ";
 	
 	private String currentIndent;
@@ -28,9 +29,9 @@ public class DefaultDescription implements Description {
 	@Override
 	public Description child(Object child) {
 		increaseIndent();
-		appendIndent();
+		//appendIndent();
 		appendVal(child);
-		appendLine();
+		appendNewLine();
 		decreaseIndent();
 		return this;
 	}
@@ -39,73 +40,73 @@ public class DefaultDescription implements Description {
 	public Description child(String label, Object child) {
 		text(label + ":");
 		increaseIndent();
-		appendIndent();
+		//appendIndent();
 		appendVal(child);
-		appendLine();
+		appendNewLine();
 		decreaseIndent();
 		return this;
 	}
 	
 	@Override
 	public Description text(String s) {
-		appendIndent();
+		//appendIndent();
 		appendLine(s);
 		return this;
 	}
 
 	@Override
 	public Description text(String s, Object arg1) {
-		appendIndent();
+		//appendIndent();
 		appendLine(String.format(s, new Object[]{arg1}));
 		return this;
 	}
 
 	@Override
 	public Description text(String s, Object arg1, Object arg2) {
-		appendIndent();
+		//appendIndent();
 		appendLine(String.format(s, arg1, arg2));
 		return this;
 	}
 
 	@Override
 	public Description text(String s, Object arg1, Object arg2, Object arg3) {
-		appendIndent();
+		//appendIndent();
 		appendLine(String.format(s, arg1, arg2, arg3));
 		return this;
 	}
 
 	@Override
 	public Description text(String s, Object... args) {
-		appendIndent();
+		//appendIndent();
 		appendLine(String.format(s, args));
 		return this;
 	}
 
 	@Override
 	public Description values(String label,Iterable<?> children) {
-		appendIndent();
+		//appendIndent();
 		append(label);
 		appendLine(":");
 		
 		if( children == null){
-			appendIndent();
+			//appendIndent();
 			appendVal("null");
 			return this;
 		} else {
 			increaseIndent();
 			for(Iterator<?> iter = children.iterator();iter.hasNext();){
 				Object child = iter.next();
-				if(!(child instanceof SelfDescribing)){
-					appendIndent();	
-				}
+//				if(!(child instanceof SelfDescribing)){
+//					appendIndent();	
+//				}
 				appendVal(child);
 				if( iter.hasNext()){
-					if(child instanceof SelfDescribing){
-						appendIndent();	
-					}
+//					if(child instanceof SelfDescribing){
+//						appendIndent();	
+//					}
 					append(",");
 				}
-				appendLine();
+				appendNewLine();
 			}
 			decreaseIndent();
 		}
@@ -113,30 +114,38 @@ public class DefaultDescription implements Description {
 	}
 	
 	@Override
-	public Description value(String label, Object value) {
-		appendIndent();
-		append(label);
-		append(":");
+	public Description value(String prefix, Object value) {
+		//appendIndent();
+		append(prefix);
+		append(" ");
 		if( value instanceof SelfDescribing){
-			increaseIndent();
+			appendNewLine();
+		    increaseIndent();
 			appendVal(value);
 			decreaseIndent();
 		} else {
 			appendVal(value);	
 		}
-		appendLine();
+		appendNewLine();
 		return this;
 	}
+	
+	@Override
+    public Description value(Object value) {
+        appendVal(value);   
+        //appendLine();
+        return this;
+    }
 	
 	private void appendIndent(){
 		append(currentIndent);
 	}
 	
-	private void appendLine(){
+	private void appendNewLine(){
 		requireNewLine = true;
 	}
 	
-	//append the given text, setting the neext append to first prepend a newline
+	//append the given text, setting the next append to first prepend a newline
 	private void appendLine(String s){
 		append(s);
 		requireNewLine = true;
@@ -147,6 +156,7 @@ public class DefaultDescription implements Description {
 		if(requireNewLine){
 			requireNewLine = false;
 			sb.append(NL);
+			appendIndent();
 		}
 	}
 	
@@ -155,7 +165,6 @@ public class DefaultDescription implements Description {
 			return;
 		}
 		if( val instanceof SelfDescribing){	
-			appendLine();
 			((SelfDescribing)val).describeTo(this);
 		} else {
 			append(val==null?"null":val.toString());
@@ -165,7 +174,10 @@ public class DefaultDescription implements Description {
 	//append the given text, first printing a newline if required by a previous println
 	private void append(String s){
 		newLineIfRequired();
-		sb.append(s);
+//		if(s.contains("\n")){ //ensure we indent first line too
+//		    s = NL + s;
+//		}
+		sb.append(s.replaceAll("\r\n|\n", NL + currentIndent));
 	}
 	
 	private void increaseIndent() {

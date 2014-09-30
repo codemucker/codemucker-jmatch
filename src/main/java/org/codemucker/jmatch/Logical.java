@@ -99,12 +99,12 @@ public class Logical {
     	return new AbstractMatcher<T>(AllowNulls.YES) {
     		@Override
     		public boolean matchesSafely(T found, MatchDiagnostics ctxt) {
-    			return !ctxt.TryMatch(found,matcher);
+    			return !ctxt.tryMatch(this,found,matcher);
     		}
     		
     		@Override
     		public void describeTo(Description desc) {
-    			super.describeTo(desc);
+    			//super.describeTo(desc);
     			desc.value("not", matcher);
     		};
     	};

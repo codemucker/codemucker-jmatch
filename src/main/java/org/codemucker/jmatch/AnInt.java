@@ -13,7 +13,7 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				super.describeTo(desc);
+				//super.describeTo(desc);
 				desc.text("an int equal to " + require);
 			}
 		};
@@ -28,7 +28,7 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				super.describeTo(desc);
+				//super.describeTo(desc);
 				desc.text("an int > " + require);
 			}
 		};
@@ -42,7 +42,7 @@ public class AnInt { //extends Logical {
 			}
 			@Override
 			public void describeTo(Description desc) {
-				super.describeTo(desc);
+				//super.describeTo(desc);
 				desc.text("an int >= " + require);
 			}
 		};
@@ -57,7 +57,7 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				super.describeTo(desc);
+				//super.describeTo(desc);
 				desc.text("an int < " + require);
 			}
 		};
@@ -72,7 +72,7 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				super.describeTo(desc);
+				//super.describeTo(desc);
 				desc.text("an int <= " + require);
 			}
 		};
@@ -90,7 +90,7 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				super.describeTo(desc);
+				//super.describeTo(desc);
 				desc.text("an int between (inclusive) %d >= val <= %d", from, to);
 			}
 		};
@@ -108,7 +108,7 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				super.describeTo(desc);
+				//super.describeTo(desc);
 				desc.text("an int between (exclusive) %d > val < %d", from, to);
 			}
 		};

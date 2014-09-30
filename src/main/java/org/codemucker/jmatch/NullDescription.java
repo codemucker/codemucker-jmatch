@@ -33,6 +33,11 @@ public class NullDescription implements Description {
 	}
 
 	@Override
+    public Description value(Object value) {
+        return null;
+    }
+	
+	@Override
 	public Description value(String label, Object value) {
 		return this;
 	}
@@ -56,4 +61,5 @@ public class NullDescription implements Description {
 	public void describeTo(Description desc) {
 		//do nothing
 	}
+
 }

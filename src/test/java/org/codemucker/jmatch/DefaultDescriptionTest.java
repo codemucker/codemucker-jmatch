@@ -2,9 +2,7 @@ package org.codemucker.jmatch;
 
 import java.util.List;
 
-import org.codemucker.jmatch.DefaultDescription;
-import org.codemucker.jmatch.Description;
-import org.codemucker.jmatch.SelfDescribing;
+import org.junit.ComparisonFailure;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -41,7 +39,7 @@ public class DefaultDescriptionTest {
 	
 	@Test
 	public void testVal(){
-		assertEquals(desc().value("label","value"),"label:value");
+		assertEquals(desc().value("label","value"),"label value");
 	}
 
 	@Test
@@ -56,7 +54,7 @@ public class DefaultDescriptionTest {
 		assertEquals(
 			desc().value("label",myVal),
 			expect()
-				.append("label:")
+				.append("label ")
 				.append(NL).append(INDENT).append("myValue1")
 				.append(NL).append(INDENT).append("myValue2")
 		);
@@ -75,9 +73,9 @@ public class DefaultDescriptionTest {
 		assertEquals(
 			desc().value("myLabel", myVal),
 			expect()
-				.append("myLabel:")
+				.append("myLabel ")
 				.append(NL).append(INDENT).append("mySubValue")
-				.append(NL).append(INDENT).append("mySubLabel:mySubValue")
+				.append(NL).append(INDENT).append("mySubLabel mySubValue")
 				
 		);
 	}
@@ -139,7 +137,7 @@ public class DefaultDescriptionTest {
 	
 	@Test
 	public void testLabelVal(){
-		assertEquals(desc().value("myLabel","myValue"),"myLabel:myValue");
+		assertEquals(desc().value("myLabel","myValue"),"myLabel myValue");
 	}
 	
 	private void assertEquals(Description d,StringBuilder expect){
@@ -149,7 +147,7 @@ public class DefaultDescriptionTest {
 	private void assertEquals(Description d,String expect){
 		String actual = d.toString();
 		if(!expect.equals(actual)){
-			throw new AssertionError(String.format("expected %n '%s'%n but was %n'%s'%n", expect,actual));
+			throw new ComparisonFailure("comparison failed",expect,actual);
 		}
 	}
 	
