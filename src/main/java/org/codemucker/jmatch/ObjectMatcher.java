@@ -57,8 +57,8 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 	    if(desc.isNull()){
 	        return;
 	    }
-	    super.describeTo(desc);
-	    desc.text("of type " + expectType.getName());
+	   // super.describeTo(desc);
+	    desc.text((isAllowNull()?"nullable":"not null") + " type " + expectType.getName());
 	    for(Matcher<T> matcher : matchers){
 	        desc.value(matcher);
 	    }

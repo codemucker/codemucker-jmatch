@@ -78,7 +78,11 @@ public class DefaultDescription implements Description {
 	@Override
 	public Description text(String s, Object... args) {
 		//appendIndent();
-		appendLine(String.format(s, args));
+	    if(args == null || args.length == 0){
+	        appendLine(s);
+	    } else {
+	        appendLine(String.format(s, args));    
+	    }
 		return this;
 	}
 

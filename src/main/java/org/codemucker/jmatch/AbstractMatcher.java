@@ -57,4 +57,8 @@ public abstract class AbstractMatcher<T> implements Matcher<T> {
 			desc.text("not null");
 		}
 	}
+	
+	protected boolean isAllowNull(){
+	    return allowNulls == AllowNulls.YES;
+	}
 }

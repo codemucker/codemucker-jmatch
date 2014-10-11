@@ -7,6 +7,9 @@ import com.google.common.collect.ImmutableList;
 
 public class Logical {
 
+    /**
+     * Always returns true for match. That is, it matches always
+     */
 	private static final Matcher<Object> MATCHER_ANY = new AbstractMatcher<Object>(AllowNulls.YES) {
 		@Override
 		public boolean matchesSafely(Object found,MatchDiagnostics ctxt) {
@@ -19,10 +22,13 @@ public class Logical {
 		};
 	};
 	
+	/**
+	 * Always returns false for match. That is, it matches nothing
+	 */
 	private static final Matcher<Object> MATCHER_NONE = new AbstractMatcher<Object>(AllowNulls.YES) {
 		@Override
 		public boolean matchesSafely(Object found,MatchDiagnostics ctxt) {
-			return true;
+			return false;
 		}
 		
 		public void describeTo(Description desc) {
@@ -64,11 +70,17 @@ public class Logical {
     	return matcher!=null?matcher:(Matcher<T>) MATCHER_ANY;
     }
     
+    /**
+     * Always returns true for match. That is, it matches everything
+     */
     @SuppressWarnings("unchecked")
     public static <T> Matcher<T> any() {
     	return (Matcher<T>) MATCHER_ANY;
     }
     
+    /**
+     * Always returns false for match. That is, it matches nothing
+     */
     @SuppressWarnings("unchecked")
     public static <T> Matcher<T> none() {
     	return (Matcher<T>) MATCHER_NONE;
@@ -81,8 +93,8 @@ public class Logical {
     public static <T> Matcher<T> any(final Matcher<T>... matchers) {
     	return or(matchers);
     }
-
-    public static <I extends Iterable<Matcher<T>>,T> Matcher<T> any(final I matchers) {
+    
+    public static <TList extends Iterable<Matcher<T>>,T> Matcher<T> any(final TList matchers) {
     	return or(matchers);
     }
     
@@ -91,7 +103,7 @@ public class Logical {
     	return new MatcherAny<T>(matchers);
     }
 	
-	public static <I extends Iterable<Matcher<T>>,T> Matcher<T> or(final I matchers) {
+	public static <TList extends Iterable<Matcher<T>>,T> Matcher<T> or(final TList matchers) {
     	return new MatcherAny<T>(matchers);
     }
 	
@@ -133,8 +145,11 @@ public class Logical {
 
 	    @Override
 	    public void describeTo(Description desc) {
-	    	super.describeTo(desc);
-	    	desc.values("match any",matchers);
+	        if(matchers.size() > 0){
+	            desc.values("matching any",matchers);
+	        } else {
+	            super.describeTo(desc);
+	        }
 	    }
     }
 
@@ -152,7 +167,7 @@ public class Logical {
 	    @Override
 	    public boolean matchesSafely(T found, MatchDiagnostics ctxt) {
 	    	for(Matcher<T> matcher:matchers){
-	    		if( !matcher.matches(found)){
+	    		if(!matcher.matches(found)){
 	    			return false;
 	    		}
 	    	}
@@ -161,8 +176,11 @@ public class Logical {
 
 	    @Override
 	    public void describeTo(Description desc) {
-	    	super.describeTo(desc);
-	    	desc.values("match all", matchers);
+            if(matchers.size() > 0){
+                desc.values("matching all",matchers);
+            } else {
+                super.describeTo(desc);
+            }
 	    }
     }
 }

@@ -14,4 +14,6 @@ public interface MatchDiagnostics extends Description {
     
     public MatchDiagnostics newChild();
     
+    public Description newDescription();
+    
 }

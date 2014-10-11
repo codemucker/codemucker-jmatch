@@ -2,6 +2,8 @@ package org.codemucker.jmatch;
 
 public class NullDescription implements Description {
 
+    public static final Description INSTANCE = new NullDescription();
+    
 	@Override
 	public Description text(String string) {
 		return this;

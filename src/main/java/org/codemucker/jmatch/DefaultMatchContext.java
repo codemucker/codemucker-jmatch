@@ -1,8 +1,5 @@
 package org.codemucker.jmatch;
 
-import java.util.Map;
-
-import org.apache.commons.lang3.text.translate.NumericEntityUnescaper.OPTION;
 
 public class DefaultMatchContext extends DefaultDescription implements MatchDiagnostics {
 
@@ -85,6 +82,11 @@ public class DefaultMatchContext extends DefaultDescription implements MatchDiag
     @Override
     public DefaultMatchContext newChild() {
         return new DefaultMatchContext();
+    }
+
+    @Override
+    public Description newDescription() {
+        return DefaultDescription.with();
     }
 
 }

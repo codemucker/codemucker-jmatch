@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.codemucker.jmatch.Description;
-import org.codemucker.jmatch.MatchDiagnostics;
-import org.codemucker.jmatch.Matcher;
 import org.codemucker.jmatch.AbstractMatcher.AllowNulls;
+
+import com.google.common.collect.Lists;
 
 public class AString {
 
@@ -23,25 +22,34 @@ public class AString {
 		return matchers;
 	}
 	
-	public static final Matcher<String> matchingAnyAntPattern(final String antPattern, final String... orOtherAntPatterns){
-		List<Matcher<String>> matchers = new ArrayList<>(orOtherAntPatterns.length +1);
-		matchers.add(equalTo(antPattern));
-		for (int i = 0; i < orOtherAntPatterns.length; i++) {
-			matchers.add(matchingAntPattern(orOtherAntPatterns[i]));
-		}
-		return Logical.any(matchers);
+	public static final Matcher<String> matchingAnyAntPattern(final String... antPatterns){
+	    List<String> patterns = new ArrayList<>();
+	    for(String p:antPatterns){
+	        patterns.add(p);
+	    }
+		return matchingAnyAntPattern(patterns);
 	}
 	
+	public static final Matcher<String> matchingAnyAntPattern(Iterable<String> antPatterns){
+        List<Matcher<String>> matchers = new ArrayList<>();
+        for (String pattern:antPatterns) {
+            matchers.add(matchingAntPattern(pattern));
+        }
+        return Logical.any(matchers);
+    }
 	
-	public static final Matcher<String> equalToAny(final String expect, final String... orExpect){
-		List<Matcher<String>> matchers = new ArrayList<>(orExpect.length +1);
-		matchers.add(equalTo(expect));
-		for (int i = 0; i < orExpect.length; i++) {
-			matchers.add(equalTo(orExpect[i]));
-		}
-		return Logical.any(matchers);
+	public static final Matcher<String> equalToAny(final String... expects){
+		return equalToAny(Lists.newArrayList(expects));
 	}
 	
+	public static final Matcher<String> equalToAny(final Iterable<String> expects){
+        List<Matcher<String>> matchers = new ArrayList<>();
+        for (String expect:expects) {
+            matchers.add(equalTo(expect));
+        }
+        return Logical.any(matchers);
+    }
+    
 	public static final Matcher<String> equalToNull(){
 	    return equalTo(null);
 	}
@@ -314,7 +322,7 @@ public class AString {
 		
 		@Override
 		public void describeTo(Description desc) {
-			super.describeTo(desc);
+			//super.describeTo(desc);
 			desc.text("a string matching reg exp '%s'", pattern.pattern());
 		}
 	}

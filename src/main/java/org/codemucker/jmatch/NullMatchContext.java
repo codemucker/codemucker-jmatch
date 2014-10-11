@@ -33,4 +33,9 @@ public class NullMatchContext extends NullDescription implements MatchDiagnostic
     public MatchDiagnostics newChild() {
         return this;
     }
+
+    @Override
+    public Description newDescription() {
+        return NullDescription.INSTANCE;
+    }
 }

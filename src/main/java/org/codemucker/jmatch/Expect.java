@@ -24,7 +24,7 @@ public class Expect {
      * <pre>
      * Expect
      *  .that(foo).is(AFoo.with().name("Bob"))
-     *  </pre> 
+     *  </pre>  
      */
     public static <T> ExpectAsserter<T> that(T actual) {
         return new Expect().newExpectAsserter(actual);
@@ -89,6 +89,10 @@ public class Expect {
             is(AnInstance.equalTo(expect));
         }
 
+        public void isNot(Matcher<? super T> matcher) {
+            is(Logical.not(matcher));
+        }
+        
         public void is(Matcher<? super T> matcher) {
             // try fast diagnostics first. If fails rerun with a collecting one
             if (!matcher.matches(actual, NullMatchContext.INSTANCE)) {
