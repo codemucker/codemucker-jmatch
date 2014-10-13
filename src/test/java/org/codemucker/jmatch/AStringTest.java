@@ -27,6 +27,12 @@ public class AStringTest {
 		assertThat("xxaxx",is(AString.matchingAntPattern("*a?*")));
 		assertNotThat("xxa",is(AString.matchingAntPattern("*a?")));
 		assertNotThat("xxb",is(AString.matchingAntPattern("*a?")));
+		
+		assertNotThat("x/y/z",is(AString.matchingAntPattern("*y*")));
+		assertThat("x/y/z",is(AString.matchingAntPattern("**y**")));
+		assertThat("x/y/z",is(AString.matchingAntPattern("*/y/*")));
+		
+		assertThat("/a/b/c/x/y/z",is(AString.matchingAntPattern("**b**y**")));
 	}
 	
 	public static <T> void assertNotThat(T actual,Matcher<T> matcher){

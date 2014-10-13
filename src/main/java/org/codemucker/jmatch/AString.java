@@ -296,7 +296,13 @@ public class AString {
     		if (c == '.') {
     			sb.append("\\.");
     		} else if (c == '*') {
-    			sb.append(".*");
+    		    //to match path separators an ANT expression requires a double asterix as in '**'
+                if (i <= antPattern.length() - 2 && antPattern.charAt(i + 1) == '*') {
+                    sb.append(".*");
+                    i++;
+                } else {
+                    sb.append("[^/\\\\]*");// a single asterix '*' doesn't match path separators
+                }
     		} else if (c == '?') {
     			sb.append(".{1}");
     		} else {
