@@ -58,9 +58,9 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 	        return;
 	    }
 	   // super.describeTo(desc);
-	    desc.text((isAllowNull()?"nullable":"not null") + " type " + expectType.getName());
+	    desc.text((isAllowNull()?"nullable":"non null") + " type " + expectType.getName());
 	    for(Matcher<T> matcher : matchers){
-	        desc.value(matcher);
+	        desc.value("with",matcher);
 	    }
 	}
 }

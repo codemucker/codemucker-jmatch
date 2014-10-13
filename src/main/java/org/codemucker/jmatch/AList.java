@@ -12,26 +12,43 @@ import org.codemucker.lang.annotation.ThreadSafe;
 
 
 /**
- * Matcher to match on a collections of objects. Configurable to take into account element order
+ * <p>Matcher to match on a collections of objects. Configurable to take into account element order
  * and/or whether we ignore additional list items or not.
  * 
+ * </p>
+ * <p>
  * Typical usage:
  * 
- * AList.of(String.class).inAnyOrder().containingOnly().a(myMatcher).a(myMatcher2)
+ * <pre>
+ *  AList.of(String.class).inAnyOrder()
+ *      .withOnly(myMatcher)
+ *      .and(myMatcher2)
+ *  </pre>
  * 
  * Thread safe if no modifications are made to the matcher once it's been handed off to the various threads
- *
- * @author Bert van Brakel
- *
- * Example usage:
+ *</p>
+ * <p> Example usages:
  * 
+ * <pre>
  * AList.ofStrings().withNothing()
  * AList.of(Foo.class).withNothing()
  * 
  * AList.inOrder().withAtLeast(AFoo.with().name("bar"))
  * AList.withOnly(AFoo.with().name("bar"))
- * AList.anyOrder().withOnly(AFoo.with().name("bar")).and(AFoo.with().name("bob"))
+ * AList.inAnyOrder()
+ *      .withOnly(AFoo.with().name("bar"))
+ *      .and(AFoo.with().name("bob"))
+ * </pre>
+ * Using the expector:
  * 
+ * <pre>
+ * Expect
+ *  .that(foo)
+ *  .is(AList.inOrder()
+ *      .withOnly(AFoo.with().name("bob"))
+ *      .and(AFoo.with().name("alice")))
+ * </pre>
+ * </p>
  */
 
 public class AList {
@@ -88,6 +105,9 @@ public class AList {
 		return new ListContainsAndTypeRequired(ListMatcher.ORDER.ANY);
 	}
 	
+	/**
+     * Builder for a list matcher where order and contains (only/any) must still be provided
+     */
 	public static class ListOrderAndContainsRequired<T>{
 		/**
 		 * A matcher which expects an empty list
@@ -109,7 +129,9 @@ public class AList {
 			return new ListContainsRequired<T>(ListMatcher.ORDER.ANY);
 		}
 	}
-	
+	/**
+	 * Builder for a list matcher where item type has not yet been provided
+	 */
 	public static class ListContainsAndTypeRequired {
 
 		private final ListMatcher.ORDER order;
@@ -135,6 +157,9 @@ public class AList {
 		}		
 	}
 
+	/**
+     * Builder for a list matcher where the item type has already been provided
+     */
 	public static class ListContainsRequired<T> {
 
 		private final ListMatcher.ORDER order;
@@ -235,13 +260,21 @@ public class AList {
 		
 	}
 	
+	/**
+	 * The list matcher which does the actual work
+	 *
+	 * @param <T> the type of the item we are expecting
+	 */
 	@ThreadSafe(caveats="if no matchers are added once it's been handed off to the various threads")
-	private final static class ListMatcher<T> extends AbstractNotNullMatcher<Iterable<T>> implements IAcceptMoreMatchers<T>
-	{
+	private final static class ListMatcher<T> extends AbstractNotNullMatcher<Iterable<T>> implements IAcceptMoreMatchers<T> {
+	    
 	    private final Collection<Matcher<T>> matchers = new ArrayList<Matcher<T>>();
 	    private final ORDER order;
 	    private final CONTAINS contains;
 	
+	    /**
+	     * The order we expect list elements to be in
+	     */
 	    private static enum ORDER {
 	        /**
 	         * Exact order. Elements must be in the same order as the matcher
@@ -253,6 +286,9 @@ public class AList {
 	        ANY;
 	    }
 	
+	    /**
+	     * How we deal with additional items in the list
+	     */
 	    private static enum CONTAINS {
 	        /**
 	         * All matchers have to match. Additional elements are allowed. One matcher per item
@@ -359,10 +395,11 @@ public class AList {
 	    
 	    @Override
 	    public void describeTo(final Description desc) {
-	        desc.value("contains", contains.toString().toLowerCase());
-	        desc.value( "order", order.toString().toLowerCase());
-	        desc.values("items", matchers);
+	        if(desc.isNull()){
+	            return;
+	        }
 	        
+	        desc.values("items in " + order.toString().toLowerCase() + " order matching " +  contains.toString().toLowerCase() + " (" + matchers.size() + " matchers)" , matchers);
 	    }
 	}
 }

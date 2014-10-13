@@ -42,7 +42,7 @@ public final class AnInstance {
 			@Override
 			public void describeTo(Description desc) {
 				super.describeTo(desc);
-				desc.text("an instance equal to ", expect);
+				desc.value("an instance equal to ", expect);
 			}
 		};
 	}

@@ -99,7 +99,7 @@ public class Expect {
                 MatchDiagnostics diag = new DefaultMatchContext(debugEnabled, showMatches);
                 matcher.matches(actual, diag);
 
-                DefaultDescription desc = new DefaultDescription();
+                Description desc = diag.newDescription();
                 desc.text("Assertion failed!");
                 desc.child("expected", matcher);
                 desc.child("but was", actual);
