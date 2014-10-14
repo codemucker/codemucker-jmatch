@@ -42,11 +42,17 @@ public class Assert {
 		return Logical.not(matcher);
 	}
 	
-	public void fail(String msg,Object... args){
+	public static void fail(String msg,Object... args){
 		fail(String.format(msg, args));
 	}
 
-	public void fail(String msg){
+	public static void fail(String msg){
 		throw new AssertionError(msg == null ? "" : msg);
 	}
+
+    public static void assertEquals(String msg, int expect, int actual) {
+        if( expect != actual){
+            fail(msg + ". Expected %s but got %s", expect, actual);
+        }
+    }
 }

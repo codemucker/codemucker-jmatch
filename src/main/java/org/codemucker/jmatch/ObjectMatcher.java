@@ -15,9 +15,10 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 	private final List<Matcher<T>> matchers = new ArrayList<>();
 	private final Class<T> expectType;
 	
-	public ObjectMatcher(Class expectType){
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+    public ObjectMatcher(Class expectType){
 		super(AllowNulls.NO);
-		this.expectType = expectType;
+		this.expectType = (Class<T>) expectType;
 	}
 	
 	protected Class<T> getExpectType(){

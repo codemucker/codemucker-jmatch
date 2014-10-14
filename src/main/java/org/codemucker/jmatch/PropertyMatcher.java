@@ -30,7 +30,8 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 	/**
 	 * @param beanClass the class this matcher is for
 	 */
-	public PropertyMatcher(Class<T> beanClass){
+	@SuppressWarnings("rawtypes")
+    public PropertyMatcher(Class beanClass){
 	    super(beanClass);
 	}
 	
@@ -41,7 +42,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 		}
 		
 		if( getter == null){
-			throw new MatchRuntimeException("Couldn't find getter method '" + propertyName + "' on class '" + getExpectType().getName() + "'. Tried with and with 'get' prefixed");
+			throw new JMatchException("Couldn't find getter method '" + propertyName + "' on class '" + getExpectType().getName() + "'. Tried with and with 'get' prefixed");
 		}
 		//check property type is the same as matcher
 		Class<?> actualPropertyType = getter.getReturnType();

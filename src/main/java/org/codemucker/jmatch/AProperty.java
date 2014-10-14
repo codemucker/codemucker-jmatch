@@ -95,11 +95,11 @@ public class AProperty {
 					Object propertyVal = getterMethod.invoke(actual, EMPTY_ARGS);
 					return propertyMatcher.matches(propertyVal);
 				} catch (IllegalAccessException e) {
-					throw new MatchRuntimeException("error invoking getter",e);
+					throw new JMatchException("error invoking getter",e);
 				} catch (IllegalArgumentException e) {
-					throw new MatchRuntimeException("error invoking getter",e);
+					throw new JMatchException("error invoking getter",e);
 				} catch (InvocationTargetException e) {
-					throw new MatchRuntimeException("error invoking getter",e);
+					throw new JMatchException("error invoking getter",e);
 				}
 			}
 			
