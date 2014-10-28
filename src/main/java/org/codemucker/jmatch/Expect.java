@@ -89,6 +89,10 @@ public class Expect {
             is(AnInstance.equalTo(expect));
         }
 
+        public void isNotNull() {
+            is(AnInstance.notNull());
+        }
+        
         public void isNot(Matcher<? super T> matcher) {
             is(Logical.not(matcher));
         }

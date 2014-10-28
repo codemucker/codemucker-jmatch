@@ -12,6 +12,20 @@ import com.google.common.collect.Lists;
 
 public class AString {
 
+    public static final Matcher<String> equalToAnything() {
+        return new AbstractMatcher<String>(AllowNulls.YES) {
+            @Override
+            protected boolean matchesSafely(String actual, MatchDiagnostics diag) {
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description desc) {
+                desc.text("a string of anything or null");
+            }
+        };
+    }
+
 	@SafeVarargs
 	public static final List<Matcher<String>> equalToAll(final String... expectAll) {
 		List<Matcher<String>> matchers = new ArrayList<Matcher<String>>(

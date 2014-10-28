@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.common.base.Predicate;
 
 /***
- * Matcher to collect a list of matchers for a given object type
+ * Matcher to collect a list of matchers for a given object type. Passes if no matchers fail
  *
  * @param <T>
  */
