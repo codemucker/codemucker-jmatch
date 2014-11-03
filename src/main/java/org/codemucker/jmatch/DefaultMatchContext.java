@@ -1,6 +1,5 @@
 package org.codemucker.jmatch;
 
-
 public class DefaultMatchContext extends DefaultDescription implements MatchDiagnostics {
 
     private final boolean debugEnabled;

@@ -297,7 +297,7 @@ public class AString {
 	 * Convert an ant regular expression into a java pattern
 	 */
 	private static Pattern antExpToPattern(String antPattern) {
-		return Pattern.compile(antExpToPatternExp(antPattern));
+		return Pattern.compile(antExpToPatternExp(antPattern),Pattern.DOTALL);
 	}
 	
 	/**
@@ -326,7 +326,6 @@ public class AString {
     	return sb.toString();
     }
 
-	
 	private static class RegExpPatternMatcher extends AbstractNotNullMatcher<String> {
 		private final Pattern pattern;
 		
@@ -343,7 +342,34 @@ public class AString {
 		@Override
 		public void describeTo(Description desc) {
 			//super.describeTo(desc);
-			desc.text("a string matching reg exp '%s'", pattern.pattern());
+			desc.text("a string matching reg exp '%s'%s", pattern.pattern(),toOptions(pattern));
+		}
+		
+		private static String toOptions(Pattern p){
+		    int flags = p.flags();
+		    StringBuilder sb = new StringBuilder();
+		    addIf(sb,flags,Pattern.CANON_EQ,"canonical");
+		    addIf(sb,flags,Pattern.CASE_INSENSITIVE,"case insensitive");
+		    addIf(sb,flags,Pattern.COMMENTS,"permit comments and whitespace");
+		    addIf(sb,flags,Pattern.DOTALL,"dotall");
+		    addIf(sb,flags,Pattern.LITERAL,"literal");
+		    addIf(sb,flags,Pattern.MULTILINE,"multiline");
+		    addIf(sb,flags,Pattern.UNICODE_CASE,"unicode case");
+		    addIf(sb,flags,Pattern.UNICODE_CHARACTER_CLASS,"canon");
+		    addIf(sb,flags,Pattern.UNIX_LINES,"unix lines");
+		    if(sb.length() > 0 ){
+		        return " with pattern option " + sb.toString();
+		    }
+		    return sb.toString();
+		}
+		
+		private static void addIf(StringBuilder sb, int flags,int opt, String name){
+		    if((flags & opt) != 0){
+		        if(sb.length() > 0){
+		            sb.append(",");
+		        }
+		        sb.append(name);
+		    }
 		}
 	}
 	
