@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.codemucker.jmatch.Description;
-import org.codemucker.jmatch.Matcher;
 import org.codemucker.lang.annotation.ThreadSafe;
 
 
@@ -85,6 +83,10 @@ public class AList {
 		return new ListEmptyMatcher<T>();
 	}
 	
+	public static <T> Matcher<Iterable<T>> withOnly(T value){
+        return withOnly(AnInstance.equalTo(value));
+    }
+	
 	public static <T> Matcher<Iterable<T>> withOnly(Matcher<T> matcher){
 		return new ListMatcher<T>(ListMatcher.ORDER.ANY,ListMatcher.CONTAINS.ONLY).add(matcher);
 	}
@@ -144,6 +146,10 @@ public class AList {
 			return new ListTypeRequired(order,ListMatcher.CONTAINS.ATLEAST);
 		}
 		
+		public <T> IAcceptMoreMatchers<T> withAtLeast(T  value){
+            return withAtLeast(AnInstance.equalTo(value));
+        }
+		
 		public <T> IAcceptMoreMatchers<T> withAtLeast(Matcher<T> matcher){
 			return new ListMatcher<T>(order,ListMatcher.CONTAINS.ATLEAST).add(matcher);
 		}
@@ -151,6 +157,10 @@ public class AList {
 		public ListTypeRequired withOnly(){
 			return new ListTypeRequired(order,ListMatcher.CONTAINS.ONLY);
 		}
+		
+		public <T> IAcceptMoreMatchers<T> withOnly(T value){
+            return withOnly(AnInstance.equalTo(value));
+        }       
 		
 		public <T> IAcceptMoreMatchers<T> withOnly(Matcher<T> matcher){
 			return new ListMatcher<T>(order,ListMatcher.CONTAINS.ONLY).add(matcher);
@@ -239,24 +249,42 @@ public class AList {
 	
 	public interface IAcceptMoreMatchers<T> extends Matcher<Iterable<T>>{
 		/**
-	     * Add a matcher. Synonym for {@link #add(Matcher)}
+	     * Synonym for {@link #and(Matcher)}
 	     */
-		public IAcceptMoreMatchers<T> add(final Matcher<T> matcher);
+		IAcceptMoreMatchers<T> add(final Matcher<T> matcher);
+		
 		/**
-	     * Add a matcher. Synonym for {@link #add(Matcher)}
+         * Synonym for {@link #and(Object))}
+         */
+        ListMatcher<T> add(T value);
+
+        /**
+         * Synonym for {@link #and(Object))}
+         */
+        ListMatcher<T> item(T value);
+
+        /**
+	     * Synonym for {@link #and(Matcher)}
 	     */
-		public IAcceptMoreMatchers<T> item(final Matcher<T> matcher);
+		IAcceptMoreMatchers<T> item(final Matcher<T> matcher);
+
+        /**
+         * Add a list of matchers
+         */
+        IAcceptMoreMatchers<T> items(final Iterable<? extends Matcher<T>> matchers); 
+        
+        @SuppressWarnings("unchecked")
+        IAcceptMoreMatchers<T> items(final Matcher<T>... matchers); 
+        
+		/**
+		 * Add a matcher which performs an exact match for the given value
+		 */
+		IAcceptMoreMatchers<T> and(T value);
+        
 		/**
 	     * Add a matcher.
 	     */
-		public IAcceptMoreMatchers<T> and(final Matcher<T> matcher);
-		/**
-	     * Add a list of matchers
-	     */
-		public IAcceptMoreMatchers<T> items(final Iterable<? extends Matcher<T>> matchers); 
-		
-		@SuppressWarnings("unchecked")
-		public IAcceptMoreMatchers<T> items(final Matcher<T>... matchers); 
+		IAcceptMoreMatchers<T> and(final Matcher<T> matcher);
 		
 	}
 	
@@ -327,6 +355,10 @@ public class AList {
 	        return this;
 	    }
 	    
+	    @Override
+        public ListMatcher<T> item(T value) {
+            return add(value);
+        }
 	    
 	    @Override
 	    public ListMatcher<T> item(final Matcher<T> matcher) {
@@ -334,9 +366,20 @@ public class AList {
 	    }
 	    
 	    @Override
+        public ListMatcher<T> and(final T value) {
+            return add(value);
+        }
+        
+	    
+	    @Override
 	    public ListMatcher<T> and(final Matcher<T> matcher) {
 	        return add(matcher);
 	    }
+	    
+	    @Override
+        public ListMatcher<T> add(final T value) {
+            return add(AnInstance.equalTo(value));
+        }
 	    
 	    @Override
 	    public ListMatcher<T> add(final Matcher<T> matcher) {

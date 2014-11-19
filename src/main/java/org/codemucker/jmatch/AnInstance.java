@@ -28,6 +28,14 @@ public final class AnInstance {
     }
 
     public static final <T> Matcher<T> equalTo(final T expect) {
+        final String msg;
+        if(expect == null){
+            msg = "equal to ";
+        } else if( expect.getClass().isPrimitive()){
+            msg = "an " + expect.getClass().getSimpleName() + " equal to ";
+        } else {
+            msg = "an instance equal to ";
+        }
         return new AbstractMatcher<T>(AllowNulls.YES) {
             @Override
             public boolean matchesSafely(T found, MatchDiagnostics diag) {
@@ -42,8 +50,7 @@ public final class AnInstance {
 
             @Override
             public void describeTo(Description desc) {
-                super.describeTo(desc);
-                desc.value("an instance equal to ", expect);
+                desc.value(msg, expect);
             }
         };
     }

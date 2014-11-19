@@ -89,6 +89,50 @@ public class AString {
 		};
 	}
 
+	public static final Matcher<String> equalToIgnoreCaseWhiteSpace(final String expect){
+	    final String cleanExpect = safeToLower(safeRemoveWhiteSpace(expect));
+        return new AbstractMatcher<String>(AllowNulls.YES){ 
+            @Override
+            public boolean matchesSafely(String found, MatchDiagnostics ctxt) {
+                if( expect == null && found == null){
+                    return true;
+                }
+                if( expect == null || found == null){
+                    return false;
+                }
+                String cleanActual = safeToLower(safeRemoveWhiteSpace(found));
+                return cleanExpect.equals(cleanActual);
+            }
+            
+            @Override
+            public void describeTo(Description desc) {
+                super.describeTo(desc);
+                desc.text("a string equal to '%s' ignoring case and whitespace", expect);
+            }
+        };
+    }
+	
+	private static String safeToLower(String s) {
+	    if(s == null){
+	        return s;
+	    }
+	    return s.toLowerCase();
+	}
+    
+	private static String safeRemoveWhiteSpace(String s) {
+        if (s == null) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (!Character.isWhitespace(c)) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+	
 	public static final Matcher<String> equalToIgnoreCase(final String expect){
 		return new AbstractMatcher<String>(AllowNulls.YES){ 
 			@Override

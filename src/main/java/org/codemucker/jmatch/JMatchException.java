@@ -1,7 +1,7 @@
 package org.codemucker.jmatch;
 
 /**
- * Throw to indicate some issue with matching. NOT to be used for a failing match,should be thrown only
+ * Throw to indicate some issue with matching. NOT to be used for a failing match ,should be thrown only
  * when there is some internal error
  */
 public class JMatchException extends RuntimeException {
