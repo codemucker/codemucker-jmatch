@@ -1,5 +1,7 @@
 package org.codemucker.jmatch;
 
+import javax.management.RuntimeErrorException;
+
 
 public class Expect {
 
@@ -85,6 +87,10 @@ public class Expect {
             this.actual = actual;
         }
 
+        public boolean equals(Object ctexpectDoNotCallMeYouGotTheWrongMethod){
+        	throw new RuntimeException("You probably want to call 'isEqualTo' instead");
+        }
+        
         public void isEqualTo(T expect) {
             is(AnInstance.equalTo(expect));
         }

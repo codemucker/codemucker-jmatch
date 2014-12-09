@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.codemucker.jmatch.AbstractMatcher.AllowNulls;
+import org.codemucker.jmatch.expression.ExpressionParser;
+import org.codemucker.jmatch.expression.StringMatcherBuilderCallback;
 
 import com.google.common.collect.Lists;
 
@@ -34,6 +36,16 @@ public class AString {
 			matchers.add(equalTo(expectAll[i]));
 		}
 		return matchers;
+	}
+	
+	/**
+	 * Parse the given expression using a {@link ExpressionParser}
+	 * 
+	 * @param expression
+	 * @return
+	 */
+	public static final Matcher<String> matchingExpression(final String expression){
+		return ExpressionParser.parse(expression, new StringMatcherBuilderCallback());
 	}
 	
 	public static final Matcher<String> matchingAnyAntPattern(final String... antPatterns){
@@ -89,6 +101,29 @@ public class AString {
 		};
 	}
 
+	public static final Matcher<String> equalToIgnoreWhiteSpace(final String expect){
+	    final String cleanExpect = safeRemoveWhiteSpace(expect);
+        return new AbstractMatcher<String>(AllowNulls.YES){ 
+            @Override
+            public boolean matchesSafely(String found, MatchDiagnostics ctxt) {
+                if( expect == null && found == null){
+                    return true;
+                }
+                if( expect == null || found == null){
+                    return false;
+                }
+                String cleanActual = safeRemoveWhiteSpace(found);
+                return cleanExpect.equals(cleanActual);
+            }
+            
+            @Override
+            public void describeTo(Description desc) {
+                super.describeTo(desc);
+                desc.text("a string equal to '%s' ignoring whitespace", expect);
+            }
+        };
+    }
+	
 	public static final Matcher<String> equalToIgnoreCaseWhiteSpace(final String expect){
 	    final String cleanExpect = safeToLower(safeRemoveWhiteSpace(expect));
         return new AbstractMatcher<String>(AllowNulls.YES){ 
@@ -346,6 +381,11 @@ public class AString {
 	
 	/**
 	 * Convert an ant regular expression to a standard java pattern expression
+	 * 
+	 * '*' --&lt; '[^\\]*'
+	 * '?' --&lt; '.{1}'
+	 * '**' --&lt; '.*'
+	 * 
 	 */
 	private static String antExpToPatternExp(String antPattern) {
     	StringBuilder sb = new StringBuilder();

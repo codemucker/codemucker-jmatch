@@ -56,7 +56,7 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 	 * @param expectedPropertyType the property type. A check is performed to ensure the getter return type matches (throwing an error in this method call if it does not match)
 	 * @param propertyValueMatcher the matcher to validate the property value. Cannot be null
 	 */
-	protected <TProperty> void matchProperty(String propertyName, Class<TProperty> expectedPropertyType, Matcher<TProperty> propertyValueMatcher){
+	protected <TProperty> void matchProperty(String propertyName, Class<?> expectedPropertyType, Matcher<? super TProperty> propertyValueMatcher){
 	    Preconditions.checkArgument(!isBlank(propertyName),"expect non blank property name");
         Preconditions.checkNotNull(propertyValueMatcher,"expect matcher");
 	    Preconditions.checkNotNull(expectedPropertyType,"expect propertyType");
@@ -162,9 +162,9 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
 	private class PropertyValueMatcher<TProperty> extends AbstractMatcher<T> {
 		
 		private final Method getterMethod;
-		private final Matcher<TProperty> matcher;
+		private final Matcher<? super TProperty> matcher;
 		
-		private PropertyValueMatcher(Method method,Matcher<TProperty> matcher){
+		private PropertyValueMatcher(Method method,Matcher<? super TProperty> matcher){
 			this.getterMethod = method;
 			this.matcher = matcher;
 		}
@@ -198,10 +198,10 @@ public class PropertyMatcher<T> extends ObjectMatcher<T> {
        private class PropertyPathValueMatcher<TProperty> extends AbstractMatcher<T> {
             
             private final Method[] getterMethods;
-            private final Matcher<TProperty> matcher;
+            private final Matcher<? super TProperty> matcher;
             private final String methodPathDescription;
             
-            private PropertyPathValueMatcher(Method[] methods,Matcher<TProperty> matcher){
+            private PropertyPathValueMatcher(Method[] methods,Matcher<? super TProperty> matcher){
                 this.getterMethods = methods;
                 this.matcher = matcher;
                 String s = "";
