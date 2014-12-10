@@ -15,7 +15,7 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 
 	@Override
 	public void onStart() {
-		log("START");
+		onToken("START");
 		groups.clear();
 		nextIsNeg = false;
 		matcher = null;
@@ -28,7 +28,7 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 
 	@Override
 	public void onEnd() {
-		log("END");
+		onToken("END");
 		while (!groups.isEmpty()) {
 			Grouping group = groups.pop();
 			matcher = group.toMatcher();
@@ -38,31 +38,54 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 		}
 	}
 
+	
 	@Override
 	public void onExpression(String expression) {
-		log("<" + expression + ">");
-		add(newMatcher(expression));
+		onToken("<" + expression + ">");
+		add(newMatcher(expression,nextIsNeg));
 	}
 	
+	/**
+	 * Calls {@link #newMatcher(String)} and wraps it in a {@link Logical#not(Matcher)} if is negated. Override if providing custom negation of an expression (for efficiency)
+	 * 
+	 * @param negate
+	 * @param expression
+	 * @return
+	 */
+	protected Matcher<T> newMatcher(String expression,boolean negate){
+		matcher = newMatcher(expression);
+		if(nextIsNeg){
+			matcher = Logical.not(matcher );
+		}
+		nextIsNeg = false;
+		return matcher;
+	}
+
+	/**
+	 * Subclasses should override this to create a matcher based on the given expression. Called by {@link #newMatcher(boolean, String)}
+	 * 
+	 * @param expression
+	 * @return
+	 */
 	protected abstract Matcher<T> newMatcher(String expression);
 
 	@Override
 	public void onNegate() {
-		log("!");
+		onToken("!");
 		failIfPreviousNegate();
 		nextIsNeg = true;
 	}
 
 	@Override
 	public void onOR() {
-		log(" OR ");
+		onToken(" OR ");
 		failIfPreviousNegate();
 		setGroupOp(OP.OR);
 	}
 
 	@Override
 	public void onAND() {
-		log(" AND ");
+		onToken(" AND ");
 		failIfPreviousNegate();
 		setGroupOp(OP.AND);
 	}
@@ -84,14 +107,14 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 
 	@Override
 	public void onStartGroup() {
-		log(" ( ");
+		onToken(" ( ");
 		groups.push(new Grouping(OP.UNKNOWN, nextIsNeg));
 		nextIsNeg = false;
 	}
 
 	@Override
 	public void onEndGroup() {
-		log(" ) ");
+		onToken(" ) ");
 		failIfPreviousNegate();
 		Grouping group = groups.pop();
 		if(groups.isEmpty()){
@@ -102,9 +125,6 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 	}
 
 	private void add(Matcher<T> matcher) {
-		if (nextIsNeg) {
-			matcher = Logical.not(matcher);
-		}
 		nextIsNeg = false;
 		getOrCreateGrouping().add(matcher);
 	}
@@ -116,21 +136,21 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 		return groups.peek();
 	}
 
-	private void log(String msg) {
+	protected void onToken(String msg) {
 		//System.out.println(msg);
 	}
 
 	private class Grouping {
+
+		private AbstractMatchBuilderCallback.OP op;
+		private boolean negate;
+		private List<Matcher<T>> matchers = new ArrayList<>();
 
 		public Grouping(AbstractMatchBuilderCallback.OP op, boolean negate) {
 			super();
 			this.op = op;
 			this.negate = negate;
 		}
-
-		AbstractMatchBuilderCallback.OP op;
-		boolean negate;
-		List<Matcher<T>> matchers = new ArrayList<>();
 
 		void add(Matcher<T> matcher) {
 			matchers.add(matcher);

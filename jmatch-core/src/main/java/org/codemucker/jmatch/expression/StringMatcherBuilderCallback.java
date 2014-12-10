@@ -7,7 +7,7 @@ public class StringMatcherBuilderCallback extends AbstractMatchBuilderCallback<S
 
 	@Override
 	protected Matcher<String> newMatcher(String expression) {
-		return AString.matchingAntPattern(expression);
+		return AString.matchingAntPattern(expression.trim());
 	}
 	
 }

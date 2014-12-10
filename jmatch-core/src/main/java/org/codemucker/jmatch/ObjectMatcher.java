@@ -64,4 +64,13 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 	        desc.value("with",matcher);
 	    }
 	}
+	
+	/**
+	 * Return all the currently collected matchers
+	 * 
+	 * @return
+	 */
+	protected Iterable<Matcher<T>> getMatchers(){
+		return matchers;
+	}
 }

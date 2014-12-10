@@ -37,14 +37,18 @@ public class AString {
 		}
 		return matchers;
 	}
-	
 	/**
-	 * Parse the given expression using a {@link ExpressionParser}
+	 * Use a {@link ExpressionParser} to parse the expression and convert it to a matcher. Expression parts are interpreted as
+	 * {@link #matchingAntPattern(String)
 	 * 
+	 * <p> E.g    ( foo && ! bar && !(alice || bob ) )</p>
 	 * @param expression
 	 * @return
 	 */
 	public static final Matcher<String> matchingExpression(final String expression){
+		if(expression == null || expression.trim().length() == 0){
+			return equalToAnything();
+		}
 		return ExpressionParser.parse(expression, new StringMatcherBuilderCallback());
 	}
 	
@@ -360,8 +364,28 @@ public class AString {
 		};
 	}
 	
+	/**
+	 * Match using an ant expression where '*' matches anything which is not a forward or back slash, '**" matches anything, '?' matches a single char
+	 * 
+	 * @param antExpression
+	 * @return
+	 */
+	public static Matcher<String> matchingAntFilePathPattern(String antExpression){
+		return matchingAntPattern(antExpression,true);
+	}
+	
+	/**
+	 * Match using an ant expression where '*' matches anything, '?' matches a single char
+	 * 
+	 * @param antExpression
+	 * @return
+	 */
 	public static Matcher<String> matchingAntPattern(String antExpression){
-		return new RegExpPatternMatcher(antExpToPattern(antExpression));
+		return matchingAntPattern(antExpression,false);
+	}
+	
+	private static Matcher<String> matchingAntPattern(String antExpression, boolean requireDoubleStarForSlashes){
+		return new RegExpPatternMatcher(antExpToPattern(antExpression,requireDoubleStarForSlashes));
 	}
 	
 	public static Matcher<String> matchingRegex(String pattern){
@@ -375,8 +399,8 @@ public class AString {
 	/**
 	 * Convert an ant regular expression into a java pattern
 	 */
-	private static Pattern antExpToPattern(String antPattern) {
-		return Pattern.compile(antExpToPatternExp(antPattern),Pattern.DOTALL);
+	private static Pattern antExpToPattern(String antPattern,boolean requireDoubleStarForSlashes) {
+		return Pattern.compile(antExpToPatternExp(antPattern, requireDoubleStarForSlashes),Pattern.DOTALL);
 	}
 	
 	/**
@@ -387,7 +411,7 @@ public class AString {
 	 * '**' --&lt; '.*'
 	 * 
 	 */
-	private static String antExpToPatternExp(String antPattern) {
+	private static String antExpToPatternExp(String antPattern, boolean requireDoubleStarForSlashes) {
     	StringBuilder sb = new StringBuilder();
     	for (int i = 0; i < antPattern.length(); i++) {
     		char c = antPattern.charAt(i);
@@ -399,10 +423,14 @@ public class AString {
                     sb.append(".*");
                     i++;
                 } else {
-                    sb.append("[^/\\\\]*");// a single asterix '*' doesn't match path separators
+                	if(requireDoubleStarForSlashes){
+                		sb.append("[^/\\\\]*");// a single asterix '*' doesn't match path separators
+                	} else {
+                		 sb.append(".*");	
+                	}
                 }
     		} else if (c == '?') {
-    			sb.append(".{1}");
+       			sb.append(".{1}");
     		} else {
     			sb.append(c);
     		}

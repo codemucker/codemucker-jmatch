@@ -28,11 +28,23 @@ public class AStringTest {
 		assertNotThat("xxa",is(AString.matchingAntPattern("*a?")));
 		assertNotThat("xxb",is(AString.matchingAntPattern("*a?")));
 		
-		assertNotThat("x/y/z",is(AString.matchingAntPattern("*y*")));
+		assertThat("x/y/z",is(AString.matchingAntPattern("*y*")));
 		assertThat("x/y/z",is(AString.matchingAntPattern("**y**")));
 		assertThat("x/y/z",is(AString.matchingAntPattern("*/y/*")));
 		
 		assertThat("/a/b/c/x/y/z",is(AString.matchingAntPattern("**b**y**")));
+	}
+	
+	
+	@Test
+	public void testAntFilePathPattern(){
+		assertNotThat(null,is(AString.matchingAntFilePathPattern("")));
+		assertThat("",is(AString.matchingAntFilePathPattern("")));
+		assertNotThat("x/y/z",is(AString.matchingAntFilePathPattern("*y*")));
+		assertThat("x/y/z",is(AString.matchingAntFilePathPattern("**y**")));
+		assertThat("x/y/z",is(AString.matchingAntFilePathPattern("*/y/*")));
+		
+		assertThat("/a/b/c/x/y/z",is(AString.matchingAntFilePathPattern("**b**y**")));
 	}
 	
 	public static <T> void assertNotThat(T actual,Matcher<T> matcher){

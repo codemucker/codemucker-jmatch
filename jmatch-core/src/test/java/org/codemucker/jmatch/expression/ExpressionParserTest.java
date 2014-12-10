@@ -13,7 +13,7 @@ public class ExpressionParserTest {
 	public void smokeTest() {
 
 		Matcher<String> m = ExpressionParser.parse(
-				"alice && bob && !( !nick || ( 'sam && jim' || (kate && joe ) )) && sue",
+				"alice && bob && !( NOT nick || ( 'sam && jim' OR (kate AND joe ) )) && sue",
 				new MyMatcherBuilderCallback());
 		
 		String actual = m.toString();
@@ -52,15 +52,16 @@ public class ExpressionParserTest {
 		Expect.that(actual).is(AString.equalToIgnoreWhiteSpace(expect));
 	}
 	
-	private static String removeWhitespace(String s){
-		return s.replaceAll("\\s", "");
-	}
-	
 	private static class MyMatcherBuilderCallback extends AbstractMatchBuilderCallback<String> {
 
 		@Override
 		protected Matcher<String> newMatcher(String expression) {
 			return new MyMatcher(expression);
+		}
+		
+		@Override
+		protected void onToken(String msg) {
+			System.out.println(msg);
 		}
 	}
 
@@ -79,13 +80,12 @@ public class ExpressionParserTest {
 
 		@Override
 		public boolean matches(String actual, MatchDiagnostics ctxt) {
-			throw new RuntimeException("Operatio not supported");
+			throw new RuntimeException("Operation not supported");
 		}
 
 		@Override
 		public boolean matches(String actual) {
-			// TODO Auto-generated method stub
-			return false;
+			throw new RuntimeException("Operation not supported");
 		}
 
 	}

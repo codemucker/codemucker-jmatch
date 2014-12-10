@@ -24,37 +24,27 @@ public class ExpressionParser<T> {
 	private int groupCount;
 
 	private final ParseCallback<T> builder;
-	private final GroupTokens groupTokens;
+
+	private final Token TOK_NOT = new Token("NOT", "!", false);
+	private final Token TOK_NOT_LONG = new Token("NOT", "NOT", true);
+	private final Token TOK_OR = new Token("OR", "||", false);
+	private final Token TOK_OR_LONG = new Token("OR", "OR", true);
+	private final Token TOK_AND = new Token("AND", "&&", false);
+	private final Token TOK_AND_LONG = new Token("AND", "AND",true);
 	
-	public static enum GroupTokens {
-		BRACKETS('(',')'),SQUARE_BRACKETS('[',']');
-		
-		public final char start;
-		public final char end;
-		
-		private GroupTokens(char start, char end) {
-			this.start = start;
-			this.end = end;
-		}	
-	}
-	
-	private ExpressionParser(String s,ParseCallback<T> builder, GroupTokens groupTokens) {
+	private final Token TOK_START = new Token("(", "(", false);
+	private final Token TOK_END= new Token(")", ")", false);
+
+	private ExpressionParser(String s,ParseCallback<T> builder) {
 		Preconditions.checkNotNull(builder,"expect parse callback");
-		Preconditions.checkNotNull(groupTokens,"expect parse groupTokens");
 		
 		this.s = s;
 		this.len = s==null?0:s.length();
 		this.builder = builder;
-		this.groupTokens = groupTokens;
 	}
-	
 
 	public static <T> T parse(String s,ParseCallback<T> builder) throws ParseException {
-		return parse(s,builder, GroupTokens.BRACKETS);
-	}
-
-	public static <T> T parse(String s,ParseCallback<T> builder,GroupTokens tokens) throws ParseException {
-		ExpressionParser<T> parser = new ExpressionParser<T>(s,builder,tokens);
+		ExpressionParser<T> parser = new ExpressionParser<T>(s,builder);
 		try {
 			return parser.parse();
 		} catch (Exception e){
@@ -76,37 +66,21 @@ public class ExpressionParser<T> {
 				} else {
 					throw new ParseException("No closing single quote found");
 				}
-			} else if (c == '!') {
-				endLastExpression();
+			} else if (isConsumedToken(TOK_NOT) || isConsumedToken(TOK_NOT_LONG)) {
 				builder.onNegate();
-				startNextExpression();
-			} else if (c == '&') {
-				if (isPeek('&')) {
-					endLastExpression();
-					nextChar();
-					builder.onAND();
-					startNextExpression();
-				}
-			} else if (c == '|') {
-				if (isPeek('|')) {
-					endLastExpression();
-					nextChar();
-					builder.onOR();
-					startNextExpression();
-				}
-			} else if(c == groupTokens.start){
-				endLastExpression();
+			} else if (isConsumedToken(TOK_AND) || isConsumedToken(TOK_AND_LONG)) {
+				builder.onAND();
+			} else if (isConsumedToken(TOK_OR) || isConsumedToken(TOK_OR_LONG)) {
+				builder.onOR();
+			} else if(isConsumedToken(TOK_START)){
 				groupCount++;
 				builder.onStartGroup();
-				startNextExpression();
-			} else if (c == groupTokens.end) {
+			} else if (isConsumedToken(TOK_END)) {
 				if (groupCount <= 0) {
-					throw new ParseException("Invalid expression, expect a '(' before ')' at character " + pos);
+					throw new ParseException("Invalid expression, expect a '" + TOK_START.value + "' before '" + TOK_END.value + "' at character " + pos);
 				}
 				groupCount--;
-				endLastExpression();
 				builder.onEndGroup();
-				startNextExpression();
 			}
 			nextChar();
 		}
@@ -114,6 +88,56 @@ public class ExpressionParser<T> {
 		builder.onEnd();
 		
 		return builder.build();
+	}
+
+	private boolean isConsumedToken(Token token){
+		if(isToken(token)){
+			endLastExpression();
+			consumeToken(token);
+			startNextExpression();
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isToken(Token token){
+		if(read() == token.firstChar && s.startsWith(token.value, pos)){
+			if(token.requiresWhitespace){
+				int posAfter = pos + token.value.length();
+				int posBefore= pos - 1;
+				return ( (posBefore < 0 || Character.isWhitespace(s.charAt(posBefore))) && (posAfter >= s.length() || Character.isWhitespace(s.charAt(posAfter))));
+			}
+			return true;
+		}
+		return false;
+	}
+	
+	private void consumeToken(Token token){
+		int next = pos + token.value.length() -1;
+		if(token.requiresWhitespace){
+			next++;//point to the whitespace
+		}
+		if(next > len){
+			next = len;
+		}
+		pos = next;
+	
+	}
+	
+	static class Token {
+		final String name;
+		final String value;
+		final char firstChar;
+		
+		final boolean requiresWhitespace;
+		
+		public Token(String name, String value, boolean whitespaceTerminates) {
+			super();
+			this.name = name;
+			this.value = value;
+			this.firstChar = value.charAt(0);
+			this.requiresWhitespace = whitespaceTerminates;
+		}
 	}
 	
 	private boolean readNextUntil(char until) {
@@ -140,7 +164,7 @@ public class ExpressionParser<T> {
 	}
 
 	private boolean canRead() {
-		return s!= null && pos < len;
+		return pos < len;
 	}
 
 	private boolean hasNext() {
@@ -149,17 +173,6 @@ public class ExpressionParser<T> {
 
 	private char read() {
 		return s.charAt(pos);
-	}
-
-	private boolean isPeek(char c) {
-		if (hasNext()) {
-			return c == peek();
-		}
-		return false;
-	}
-
-	private char peek() {
-		return s.charAt(pos + 1);
 	}
 
 	private boolean nextChar() {

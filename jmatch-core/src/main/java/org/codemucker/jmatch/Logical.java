@@ -2,9 +2,6 @@ package org.codemucker.jmatch;
 
 import org.codemucker.jmatch.AbstractMatcher.AllowNulls;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-
 public class Logical {
 
     /**
@@ -49,12 +46,12 @@ public class Logical {
     }
    
     public static <I extends Iterable<Matcher<T>>,T> Matcher<T> and(final I matchers) {
-    	return new MatchAll<T>(matchers);   
+    	return new MatchAllMatcher<T>(matchers);   
     }
     
     @SafeVarargs
 	public static <T> Matcher<T> and(final Matcher<T>... matchers) {
-    	return new MatchAll<T>(matchers);
+    	return new MatchAllMatcher<T>(matchers);
     }
 
 	/**
@@ -100,11 +97,11 @@ public class Logical {
     
     @SafeVarargs
 	public static <T> Matcher<T> or(final Matcher<T>... matchers) {
-    	return new MatcherAny<T>(matchers);
+    	return new MatchAnyMatcher<T>(matchers);
     }
 	
 	public static <TList extends Iterable<Matcher<T>>,T> Matcher<T> or(final TList matchers) {
-    	return new MatcherAny<T>(matchers);
+    	return new MatchAnyMatcher<T>(matchers);
     }
 	
 	public static <T> Matcher<T> not(final Matcher<T> matcher) {
@@ -120,67 +117,5 @@ public class Logical {
     			desc.value("not", matcher);
     		};
     	};
-    }
-	
-	private static class MatcherAny<T> extends AbstractMatcher<T> {
-	    private final ImmutableCollection<Matcher<T>> matchers;
-
-	    private MatcherAny(Iterable<Matcher<T>> matchers) {
-        	this.matchers = ImmutableList.copyOf(matchers);		    
-	    }
-       
-	    private MatcherAny(Matcher<T>[] matchers) {
-		    this.matchers = ImmutableList.copyOf(matchers);
-	    }
-
-	    @Override
-	    public boolean matchesSafely(T found, MatchDiagnostics ctxt) {
-	    	for(Matcher<T> matcher:matchers){
-	    		if(matcher.matches(found)){
-	    			return true;
-	    		}
-	    	}
-	    	return false;
-	    }
-
-	    @Override
-	    public void describeTo(Description desc) {
-	        if(matchers.size() > 0){
-	            desc.values("matching any",matchers);
-	        } else {
-	            super.describeTo(desc);
-	        }
-	    }
-    }
-
-	private static class MatchAll<T> extends AbstractMatcher<T> {
-	    private final ImmutableCollection<Matcher<T>> matchers;
-
-        private MatchAll(Iterable<Matcher<T>> matchers) {
-        	this.matchers = ImmutableList.copyOf(matchers);		    
-	    }
-       
-	    private MatchAll(Matcher<T>[] matchers) {
-		    this.matchers = ImmutableList.copyOf(matchers);
-	    }
-
-	    @Override
-	    public boolean matchesSafely(T found, MatchDiagnostics ctxt) {
-	    	for(Matcher<T> matcher:matchers){
-	    		if(!matcher.matches(found)){
-	    			return false;
-	    		}
-	    	}
-	    	return true;
-	    }
-
-	    @Override
-	    public void describeTo(Description desc) {
-            if(matchers.size() > 0){
-                desc.values("matching all",matchers);
-            } else {
-                super.describeTo(desc);
-            }
-	    }
     }
 }
