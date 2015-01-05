@@ -25,15 +25,15 @@ public class ExpressionParser<T> {
 
 	private final ParseCallback<T> builder;
 
-	private final Token TOK_NOT = new Token("NOT", "!", false);
-	private final Token TOK_NOT_LONG = new Token("NOT", "NOT", true);
-	private final Token TOK_OR = new Token("OR", "||", false);
-	private final Token TOK_OR_LONG = new Token("OR", "OR", true);
-	private final Token TOK_AND = new Token("AND", "&&", false);
-	private final Token TOK_AND_LONG = new Token("AND", "AND",true);
+	private final Token TOK_NOT = new Token("!", false);
+	private final Token TOK_NOT_LONG = new Token("NOT", true);
+	private final Token TOK_OR = new Token("||", false);
+	private final Token TOK_OR_LONG = new Token("OR", true);
+	private final Token TOK_AND = new Token("&&", false);
+	private final Token TOK_AND_LONG = new Token("AND",true);
 	
-	private final Token TOK_START = new Token("(", "(", false);
-	private final Token TOK_END= new Token(")", ")", false);
+	private final Token TOK_START = new Token("(", false);
+	private final Token TOK_END= new Token(")", false);
 
 	private ExpressionParser(String s,ParseCallback<T> builder) {
 		Preconditions.checkNotNull(builder,"expect parse callback");
@@ -125,15 +125,13 @@ public class ExpressionParser<T> {
 	}
 	
 	static class Token {
-		final String name;
 		final String value;
 		final char firstChar;
 		
 		final boolean requiresWhitespace;
 		
-		public Token(String name, String value, boolean whitespaceTerminates) {
+		public Token(String value, boolean whitespaceTerminates) {
 			super();
-			this.name = name;
 			this.value = value;
 			this.firstChar = value.charAt(0);
 			this.requiresWhitespace = whitespaceTerminates;
