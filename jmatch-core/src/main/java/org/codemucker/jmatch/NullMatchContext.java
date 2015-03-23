@@ -10,6 +10,11 @@ public class NullMatchContext extends NullDescription implements MatchDiagnostic
 	}
 
 	@Override
+	public <T> boolean tryMatch(SelfDescribing parent,String childLabel,T actual, Matcher<T> matcher) {
+		return matcher.matches(actual, this);
+	}
+
+	@Override
 	public MatchDiagnostics matched(String text, Object... args) {
 		return this;
 	}

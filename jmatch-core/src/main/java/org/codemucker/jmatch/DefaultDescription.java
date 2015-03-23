@@ -141,10 +141,6 @@ public class DefaultDescription implements Description {
         return this;
     }
 	
-	private void appendIndent(){
-		append(currentIndent);
-	}
-	
 	private void appendNewLine(){
 		requireNewLine = true;
 	}
@@ -153,15 +149,6 @@ public class DefaultDescription implements Description {
 	private void appendLine(String s){
 		append(s);
 		requireNewLine = true;
-	}
-	
-	
-	private void newLineIfRequired(){
-		if(requireNewLine){
-			requireNewLine = false;
-			sb.append(NL);
-			appendIndent();
-		}
 	}
 	
 	private void appendVal(Object val){
@@ -181,6 +168,24 @@ public class DefaultDescription implements Description {
 //		if(s.contains("\n")){ //ensure we indent first line too
 //		    s = NL + s;
 //		}
+		appendNoNewLine(s);
+	}
+	
+	private void newLineIfRequired(){
+		if(requireNewLine){
+			requireNewLine = false;
+			sb.append(NL);
+			appendNoNewLine(currentIndent);
+		} else if( isFirstLine()){
+			appendNoNewLine(currentIndent);			
+		}
+	}
+	
+	private boolean isFirstLine(){
+		return sb.length() == 0;
+	}
+	
+	private void appendNoNewLine(String s){
 		sb.append(s.replaceAll("\r\n|\n", NL + currentIndent));
 	}
 	

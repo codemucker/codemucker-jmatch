@@ -256,12 +256,12 @@ public class AList {
 		/**
          * Synonym for {@link #and(Object))}
          */
-        ListMatcher<T> add(T value);
+		IAcceptMoreMatchers<T> add(T value);
 
         /**
          * Synonym for {@link #and(Object))}
          */
-        ListMatcher<T> item(T value);
+        IAcceptMoreMatchers<T> item(T value);
 
         /**
 	     * Synonym for {@link #and(Matcher)}

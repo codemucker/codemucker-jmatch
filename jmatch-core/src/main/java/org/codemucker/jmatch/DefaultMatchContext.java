@@ -16,20 +16,33 @@ public class DefaultMatchContext extends DefaultDescription implements MatchDiag
 
     @Override
     public <T> boolean tryMatch(SelfDescribing parent,T actual, Matcher<T> matcher) {
-        return internalTryMatch(parent,actual, matcher, null);
+        return internalTryMatch(parent,null,actual, matcher, null);
+    }
+    
+    @Override
+    public <T> boolean tryMatch(SelfDescribing parent,String childLabel, T actual, Matcher<T> matcher) {
+        return internalTryMatch(parent,childLabel,actual, matcher, null);
     }
 
-    private <T> boolean internalTryMatch(SelfDescribing parent,T actual, Matcher<T> childMatcher, SelfDescribing selfDescribing) {
+    private <T> boolean internalTryMatch(SelfDescribing parent,String childLabel, T actual, Matcher<T> childMatcher, SelfDescribing selfDescribing) {
         // so we can print child diagnostics after
         DefaultMatchContext childDiag = newChild();
         boolean matched = childMatcher.matches(actual, childDiag);
 
         if(matched){
             if(showMatches){
-                text("Match passed");
+            	if(childLabel!= null){
+            		text(childLabel + " matched");	
+            	} else {
+            		text("Matched");
+            	}
             }
         } else {
-            text("Match FAILED");
+        	if(childLabel!= null){
+        		text(childLabel + " match FAILED");	
+        	} else {
+        		text("Match FAILED");
+        	}
         }
         
         DefaultDescription desc = DefaultDescription.with();
@@ -80,7 +93,7 @@ public class DefaultMatchContext extends DefaultDescription implements MatchDiag
 
     @Override
     public DefaultMatchContext newChild() {
-        return new DefaultMatchContext();
+        return new DefaultMatchContext(debugEnabled,showMatches);
     }
 
     @Override
