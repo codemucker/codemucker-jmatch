@@ -118,11 +118,11 @@ public class AListTest {
             //ensure each list contains the items
             list.addAll(asList("abc", "xyz", "123" ));
 
-          	assertTrue(AList.ofStrings().inAnyOrder().withAtLeast().items(matchers).matches(list));
-    		assertTrue(AList.ofStrings().inAnyOrder().withOnly().items(matchers).matches(list));
+          	Expect.that(list).is(AList.ofStrings().inAnyOrder().withAtLeast().items(matchers));
+          	Expect.that(list).is(AList.ofStrings().inAnyOrder().withOnly().items(matchers));
     	
-    		assertFalse(AList.ofStrings().inOrder().withAtLeast().items(matchers).matches(list));
-    		assertFalse(AList.ofStrings().inOrder().withOnly().items(matchers).matches(list));
+          	Expect.that(list).isNot(AList.ofStrings().inOrder().withAtLeast().items(matchers));
+          	Expect.that(list).isNot(AList.ofStrings().inOrder().withOnly().items(matchers));
         }
     }
 

@@ -217,22 +217,17 @@ public class AList {
 	     * Add a list of matchers
 	     */
 		public <T>  IAcceptMoreMatchers<T> items(final Iterable<? extends Matcher<T>> matchers){
-			ListMatcher<T> list = new ListMatcher<T>(order, contains);
-			for(Matcher<T> m : matchers){
-				list.add(m);
-			}
-			return list;
+			return new ListMatcher<T>(order, contains).items(matchers);
+		}
+		
+		public <T> ListMatcher<T> items(final T... exactItems) {
+			return new ListMatcher<T>(order, contains).items(exactItems);	
 		}
 		
 		@SuppressWarnings("unchecked")
 		public <T> IAcceptMoreMatchers<T> items(final Matcher<T>... matchers){
-			ListMatcher<T> list = new ListMatcher<T>(order, contains);
-			for(Matcher<T> m : matchers){
-				list.add(m);
-			}
-			return list;
+			return new ListMatcher<T>(order, contains).items(matchers);
 		}
-		
 	}
 	
 	private static class ListEmptyMatcher<T> extends AbstractNotNullMatcher<Iterable<T>>
@@ -272,6 +267,8 @@ public class AList {
          * Add a list of matchers
          */
         IAcceptMoreMatchers<T> items(final Iterable<? extends Matcher<T>> matchers); 
+        
+        IAcceptMoreMatchers<T> items(final T... exactItems); 
         
         @SuppressWarnings("unchecked")
         IAcceptMoreMatchers<T> items(final Matcher<T>... matchers); 
@@ -348,6 +345,14 @@ public class AList {
 	    }
 	    
 	    @Override
+	    public ListMatcher<T> items(final T... exactItems) {
+	        for(T item:exactItems){
+	        	add(AnInstance.equalTo(item));
+	        }
+	        return this;
+	    }
+	    
+	    @Override
 	    public ListMatcher<T> items(final Matcher<T>... matchers) {
 	        for(Matcher<T> matcher:matchers){
 	        	add(matcher);
@@ -393,6 +398,9 @@ public class AList {
 	        // matcher. If all the matchers
 	        // have passed once, then we have no more checks to perform
 	        final List<Matcher<T>> matchersLeft = new ArrayList<Matcher<T>>(matchers);
+	        final List<ItemIndexHolder<T>> nonMatchedItems = new ArrayList<>();
+        	final boolean diagEnabled = !diag.isNull();
+        	
 	        int actualCount=0;
 	        switch (order) {
 	        case ANY:
@@ -401,15 +409,22 @@ public class AList {
 	                actualCount++;
 	                // since order is not important, lets find the first matcher
 	                // which matches
+	                boolean entryMatched = false;
 	                matcher:for (final Iterator<Matcher<T>> iter = matchersLeft.iterator(); iter
 	                        .hasNext();) {
 	                    final Matcher<T> matcher = iter.next();
-	                    if (matcher.matches(actualItem)) {
+	                    MatchDiagnostics child = diag.newChild();
+	                    if (matcher.matches(actualItem,child)) {
 	                        // we've used the matcher, lets not use it again
+	                    	diag.child(child);
 	                        iter.remove();
+	                        entryMatched = true;
 	                        break matcher;
 	                    }
 	                }
+	                if(!entryMatched && diagEnabled){
+	            		nonMatchedItems.add(new ItemIndexHolder<T>(actualCount,actualItem));
+	            	}
 	            }
 	            break;
 	        case EXACT:
@@ -420,20 +435,42 @@ public class AList {
 	                if (matchersLeft.size() == 0) {
 	                    break;
 	                }
+	                MatchDiagnostics child = diag.newChild();
 	                // always use the first matcher as this should match first.
-	                if (matchersLeft.get(0).matches(actualItem)) {
+	                if (matchersLeft.get(0).matches(actualItem,diag)) {
+	                	diag.child(child);
 	                    matchersLeft.remove(0);
+	                } else {
+	                	if(diagEnabled){
+	                		nonMatchedItems.add(new ItemIndexHolder<T>(actualCount,actualItem));
+	                	}
 	                }
 	            }
 	            break;
 	        }
+	        boolean matched = true;
 	        //don't expect any more items than matchers for CONTAINS.ONLY
-	        if( CONTAINS.ONLY == contains && matchers.size() != actualCount){
-	            return false;
+	        if(CONTAINS.ONLY == contains && matchers.size() != actualCount){
+	        	if(diagEnabled && nonMatchedItems.size() > 0){
+	        		for(ItemIndexHolder<T> itemAndIndex:nonMatchedItems){
+	        			diag.mismatched("position=" + itemAndIndex.position + ",item=" + itemAndIndex.item);
+	        		}
+	        	}
+	        	matched = false;
 	        }
-	
+	        
 	        // if zero means each matcher has matched once
-	        return matchersLeft.size() == 0;
+	        if(matchersLeft.size() != 0){
+	        	if(diagEnabled){
+	        		MatchDiagnostics child = diag.newChild();
+	        		for(SelfDescribing matcher:matchersLeft){
+		        		child.mismatched(matcher);
+		        	}
+	        		diag.child("Matchers NOT satisfied", child);
+	        	}
+	        	matched = false;
+	        }
+	        return matched;
 	    }
 	    
 	    @Override
@@ -444,5 +481,17 @@ public class AList {
 	        
 	        desc.values("items in " + order.toString().toLowerCase() + " order matching " +  contains.toString().toLowerCase() + " (" + matchers.size() + " matchers)" , matchers);
 	    }
+	}
+	
+	private static class ItemIndexHolder<T> {
+		private final int position;
+		private final T item;
+		public ItemIndexHolder(int position, T item) {
+			super();
+			this.position = position;
+			this.item = item;
+		}
+		
+		
 	}
 }

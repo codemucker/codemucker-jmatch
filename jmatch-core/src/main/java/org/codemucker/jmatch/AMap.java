@@ -267,26 +267,17 @@ public class AMap<K, V> extends PropertyMatcher<Map<K, V>> {
 		public <K,V> IAcceptMoreMapMatchers<K,V> entries(final Matcher<Map.Entry<K, V>> matcher){
 			return new MapMatcher<K,V>(order, contains).add(matcher);
 		}
-		
 
 		/**
 	     * Add a list of matchers
 	     */
 		public <K,V> IAcceptMoreMapMatchers<K,V> entries(final Iterable<? extends Matcher<Map.Entry<K, V>>> matchers){
-			MapMatcher<K,V> list = new MapMatcher<K,V>(order, contains);
-			for(Matcher<Map.Entry<K, V>> m : matchers){
-				list.add(m);
-			}
-			return list;
+			return new MapMatcher<K,V>(order, contains).entries(matchers);
 		}
 		
 		@SuppressWarnings("unchecked")
 		public <K,V> IAcceptMoreMapMatchers<K,V> entries(final Matcher<Map.Entry<K,V>>... matchers){
-			MapMatcher<K,V> list = new MapMatcher<K,V>(order, contains);
-			for(Matcher<Map.Entry<K, V>> m : matchers){
-				list.add(m);
-			}
-			return list;
+			return new MapMatcher<K,V>(order, contains).entries(matchers);
 		}
 		
 	}
@@ -419,7 +410,7 @@ public class AMap<K, V> extends PropertyMatcher<Map<K, V>> {
 	        // matcher. If all the matchers
 	        // have passed once, then we have no more checks to perform
 	        final List<Matcher<Map.Entry<K, V>>> matchersLeft = new ArrayList<Matcher<Map.Entry<K, V>>>(matchers);
-	        List<Map.Entry<K, V>> nonMatchedEntries = new ArrayList<>();
+	        final List<Map.Entry<K, V>> nonMatchedEntries = new ArrayList<>();
         	final boolean diagEnabled = !diag.isNull();
 	        switch (order) {
 	        case ANY:
@@ -431,7 +422,6 @@ public class AMap<K, V> extends PropertyMatcher<Map<K, V>> {
 	                matcher:for (final Iterator<Matcher<Map.Entry<K,V>>> iter = matchersLeft.iterator(); iter.hasNext();) {
 	                    final Matcher<Map.Entry<K,V>> matcher = iter.next();
 	                    MatchDiagnostics child = diag.newChild();
-	                    
 	                    if (matcher.matches(entry,child)) {
 	                        // we've used the matcher, lets not use it again
 	                        diag.child(child);
@@ -454,7 +444,6 @@ public class AMap<K, V> extends PropertyMatcher<Map<K, V>> {
 	                }
 	                // always use the first matcher as this should match first.
 	                MatchDiagnostics child = diag.newChild();
-                    
 	                if (matchersLeft.get(0).matches(entry,child)) {
 	                	diag.child(child);
 	                    matchersLeft.remove(0);
@@ -467,7 +456,7 @@ public class AMap<K, V> extends PropertyMatcher<Map<K, V>> {
 	            break;
 	        }
 	        boolean matched = true;
-	        //don't expect any more items than matchers for CONTAINS.ONLY
+	        //don't expect any more entries than matchers for CONTAINS.ONLY
 	        if(CONTAINS.ONLY == contains && matchers.size() != actual.size()){
 	        	if(diagEnabled && nonMatchedEntries.size() > 0){
 	        		for(Map.Entry<K, V> e:nonMatchedEntries){
@@ -481,8 +470,8 @@ public class AMap<K, V> extends PropertyMatcher<Map<K, V>> {
 	        if(matchersLeft.size() != 0){
 	        	if(diagEnabled){
 	        		MatchDiagnostics child = diag.newChild();
-	        		for(SelfDescribing d:matchersLeft){
-		        		child.mismatched(d);
+	        		for(SelfDescribing matcher:matchersLeft){
+		        		child.mismatched(matcher);
 		        	}
 	        		diag.child("Matchers NOT satisfied", child);
 	        	}
