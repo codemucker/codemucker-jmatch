@@ -2,6 +2,7 @@ package org.codemucker.jmatch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,11 +36,14 @@ public class Expect {
 	}
 
 	public static <T> ExpectAsserter<Iterable<T>> that(T[] actual) {
+		if (actual == null) {
+			return null;
+		}
 		Iterable<T> iter = new ArrayToIterable<T>(actual);
 		return new Expect().newExpectAsserter(iter);
 	}
 
-	private static class ArrayToIterable<T> implements Iterable<T> {
+	private static class ArrayToIterable<T> implements Iterable<T>, SelfDescribing {
 
 		private final T[] array;
 		private final List<T> list;
@@ -75,6 +79,19 @@ public class Expect {
 		@Override
 		public boolean equals(Object obj) {
 			return array.equals(obj);
+		}
+
+		@Override
+		public void describeTo(Description desc) {
+			if(array == null){
+				desc.text("A null array");
+			} else {
+				desc.text("An array of length " + array.length + ", with items:");
+				
+				for(int i = 0;i < array.length;i++){
+					desc.value("[" + i + "] =",array[i]);
+				}
+			}
 		}
 
 	}
@@ -161,11 +178,35 @@ public class Expect {
 				Description desc = diag.newDescription();
 				desc.text("Assertion failed!");
 				desc.child("expected", matcher);
-				desc.child("but was", actual);
+				desc.child("but was", was(actual));
 				desc.child("diagnostics", diag);
 
 				throw new AssertionError(desc.toString() + "\n");
 			}
+		}
+		
+		private Object was(Object obj){
+			if(obj != null && !(obj instanceof SelfDescribing)){
+				if(obj.getClass().isArray()){
+					Object[] arr = (Object[])obj;
+					StringBuilder sb = new StringBuilder();
+					sb.append("An array of length " + arr.length + ", with items:");
+					for(int i = 0;i < arr.length;i++){
+						sb.append("\n[" + i + "]=").append(arr[i]);
+					}
+					return sb.toString();
+				} else if ( obj instanceof Collection ){
+					Collection<?> col = (Collection<?>)obj;
+					StringBuilder sb = new StringBuilder();
+					int i = 0;
+					sb.append("A collection of length " + col.size() + ", with items:");
+					for(Iterator<?> iter = col.iterator();iter.hasNext();i++){
+						sb.append("\n[" + i + "]=").append(iter.next());
+					}
+					return sb.toString();
+				}
+			}
+			return obj;
 		}
 	}
 
