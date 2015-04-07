@@ -478,8 +478,11 @@ public class AList {
 	        if(desc.isNull()){
 	            return;
 	        }
+	        int size = matchers.size();
+	        String order = this.order.toString().toLowerCase();
+	        String contains = this.contains.toString().toLowerCase();
 	        
-	        desc.values("items in " + order.toString().toLowerCase() + " order matching " +  contains.toString().toLowerCase() + " (" + matchers.size() + " matchers)" , matchers);
+	        desc.values("items in " + order + " order matching " +  contains + " (" + size + " matcher" + (size==1?"":"s")+ ")" , matchers);
 	    }
 	}
 	

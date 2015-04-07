@@ -190,18 +190,28 @@ public class Expect {
 				if(obj.getClass().isArray()){
 					Object[] arr = (Object[])obj;
 					StringBuilder sb = new StringBuilder();
-					sb.append("An array of length " + arr.length + ", with items:");
-					for(int i = 0;i < arr.length;i++){
-						sb.append("\n[" + i + "]=").append(arr[i]);
-					}
+					int size = arr.length;
+					if(size == 0){
+						sb.append("An array of length " + size + " with no items");
+					} else {
+						sb.append("An array of length " + size + ", with items:");
+						for(int i = 0;i < arr.length;i++){
+							sb.append("\n[" + i + "]=").append(arr[i]);
+						}
+						}
 					return sb.toString();
 				} else if ( obj instanceof Collection ){
 					Collection<?> col = (Collection<?>)obj;
 					StringBuilder sb = new StringBuilder();
+					int size = col.size();
 					int i = 0;
-					sb.append("A collection of length " + col.size() + ", with items:");
-					for(Iterator<?> iter = col.iterator();iter.hasNext();i++){
-						sb.append("\n[" + i + "]=").append(iter.next());
+					if(size == 0){
+						sb.append("A collection of length " + size + " with no items");
+					} else {
+						sb.append("A collection of length " + size + ", with items:");
+						for(Iterator<?> iter = col.iterator();iter.hasNext();i++){
+							sb.append("\n[" + i + "]=").append(iter.next());
+						}
 					}
 					return sb.toString();
 				}
