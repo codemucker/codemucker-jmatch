@@ -37,9 +37,10 @@ public class AString {
 		}
 		return matchers;
 	}
+	
 	/**
 	 * Use a {@link ExpressionParser} to parse the expression and convert it to a matcher. Expression parts are interpreted as
-	 * {@link #matchingAntPattern(String)
+	 * {@link #matchingAntPattern(String). If the expression is null or blank then match anything
 	 * 
 	 * <p> E.g    ( foo && ! bar && !(alice || bob ) )</p>
 	 * @param expression
