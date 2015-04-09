@@ -1,23 +1,28 @@
 package org.codemucker.jmatch;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 public class MatchAnyMatcher<T> extends AbstractMatcher<T> {
-    private final ImmutableCollection<Matcher<T>> matchers;
 
-    public MatchAnyMatcher(Iterable<Matcher<T>> matchers) {
-    	this.matchers = ImmutableList.copyOf(matchers);		    
+	@SuppressWarnings("rawtypes")
+	private static final Matcher[] EMPTY_MATCHERS = new Matcher<?>[0];
+	
+    private final Matcher<T>[] matchers;
+
+    @SuppressWarnings("unchecked")
+	public MatchAnyMatcher(Iterable<Matcher<T>> matchers) {  
+    	this.matchers = ImmutableList.copyOf(matchers).toArray(EMPTY_MATCHERS);	    
     }
 
-    public MatchAnyMatcher(Matcher<T>[] matchers) {
-	    this.matchers = ImmutableList.copyOf(matchers);
+    @SuppressWarnings("unchecked")
+	public MatchAnyMatcher(Matcher<T>[] matchers) {
+    	this.matchers = ImmutableList.copyOf(matchers).toArray(EMPTY_MATCHERS);	 
     }
 
     @Override
     public boolean matchesSafely(T found, MatchDiagnostics ctxt) {
-    	for(Matcher<T> matcher:matchers){
-    		if(matcher.matches(found)){
+    	for(int i = 0; i < matchers.length;i++){
+    		if(matchers[i].matches(found)){
     			return true;
     		}
     	}
@@ -26,7 +31,7 @@ public class MatchAnyMatcher<T> extends AbstractMatcher<T> {
 
     @Override
     public void describeTo(Description desc) {
-        if(matchers.size() > 0){
+        if(matchers.length > 0){
             desc.values("matching any",matchers);
         } else {
             super.describeTo(desc);
