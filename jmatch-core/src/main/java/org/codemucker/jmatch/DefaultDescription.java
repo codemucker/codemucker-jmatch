@@ -3,6 +3,10 @@ package org.codemucker.jmatch;
 import java.util.Iterator;
 import java.util.Stack;
 
+import org.codemucker.jmatch.util.ArrayUtils;
+
+import com.google.common.collect.Lists;
+
 public class DefaultDescription implements Description {
 
 	private final StringBuilder sb = new StringBuilder();
@@ -87,27 +91,26 @@ public class DefaultDescription implements Description {
 	}
 
 	@Override
+	public Description values(String label,Object[] children) {
+		values(label,ArrayUtils.toListOrNull(children));
+		return this;
+	}
+
+	@Override
 	public Description values(String label,Iterable<?> children) {
 		//appendIndent();
 		append(label);
 		appendLine(":");
 		
-		if( children == null){
-			//appendIndent();
+		if(children == null){
 			appendVal("null");
 			return this;
 		} else {
 			increaseIndent();
 			for(Iterator<?> iter = children.iterator();iter.hasNext();){
 				Object child = iter.next();
-//				if(!(child instanceof SelfDescribing)){
-//					appendIndent();	
-//				}
 				appendVal(child);
-				if( iter.hasNext()){
-//					if(child instanceof SelfDescribing){
-//						appendIndent();	
-//					}
+				if(iter.hasNext()){
 					append(",");
 				}
 				appendNewLine();

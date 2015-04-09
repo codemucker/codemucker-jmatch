@@ -10,6 +10,7 @@ public interface Description extends SelfDescribing {
 	
 	Description value(String label, Object value);
 	Description values(String label, Iterable<?> values);
+	Description values(String label, Object[] values);
 	Description value(Object value);
     Description child(Object child);
 	Description child(String label,Object child);

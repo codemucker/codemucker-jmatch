@@ -1,5 +1,8 @@
 package org.codemucker.jmatch;
 
+/**
+ * Description which does nothing. Used in reducing test overheads.
+ */
 public class NullDescription implements Description {
 
     public static final Description INSTANCE = new NullDescription();
@@ -41,6 +44,11 @@ public class NullDescription implements Description {
 	
 	@Override
 	public Description value(String label, Object value) {
+		return this;
+	}
+
+	@Override
+	public Description values(String label, Object[] values) {
 		return this;
 	}
 
