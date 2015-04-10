@@ -10,7 +10,8 @@ public class Expect {
 
 	private boolean debugEnabled = false;
 	private boolean showMatches = true;
-
+	private String failureMessage;
+	
 	/**
 	 * Call this to set various debug options when running tests E.g.
 	 * 
@@ -134,6 +135,11 @@ public class Expect {
 			return this;
 		}
 
+		public MatchOptions failureMessage(String msg) {
+			failureMessage = msg;
+			return this;
+		}
+		
 		public <T> ExpectAsserter<T> that(T actual) {
 			return newExpectAsserter(actual);
 		}
@@ -141,6 +147,10 @@ public class Expect {
 		public BoolExpectAsserter that(Boolean actual) {
 			return newBoolExpectAsserter(actual);
 		}
+	}
+	
+	public class WithLabelAsserter {
+		
 	}
 
 	public class ExpectAsserter<T> extends MatchOptions {
@@ -177,6 +187,9 @@ public class Expect {
 
 				Description desc = diag.newDescription();
 				desc.text("Assertion failed!");
+				if(failureMessage != null){
+					desc.text(failureMessage);
+				}
 				desc.child("expected", matcher);
 				desc.child("but was", was(actual));
 				desc.child("diagnostics", diag);

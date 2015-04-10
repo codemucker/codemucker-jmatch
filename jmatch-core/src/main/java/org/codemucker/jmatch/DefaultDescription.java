@@ -161,7 +161,7 @@ public class DefaultDescription implements Description {
 		if( val instanceof SelfDescribing){	
 			((SelfDescribing)val).describeTo(this);
 		} else {
-			append(val==null?"null":val.toString());
+			append(PrettyPrinter.toPrettyString(val));
 		}
 	}
 	

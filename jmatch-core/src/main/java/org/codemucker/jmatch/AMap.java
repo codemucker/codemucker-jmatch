@@ -460,7 +460,11 @@ public class AMap<K, V> extends PropertyMatcher<Map<K, V>> {
 	        if(CONTAINS.ONLY == contains && matchers.size() != actual.size()){
 	        	if(diagEnabled && nonMatchedEntries.size() > 0){
 	        		for(Map.Entry<K, V> e:nonMatchedEntries){
-	        			diag.mismatched("entry.key=" + e.getKey() +",entry.value=" + e.getValue());
+	        			MatchDiagnostics child = diag.newChild();
+	        			child.value("key", e.getKey());
+	        			child.value("value", e.getValue());
+	        			
+	        			diag.mismatched(child);
 	        		}
 	        	}
 	        	matched = false;
