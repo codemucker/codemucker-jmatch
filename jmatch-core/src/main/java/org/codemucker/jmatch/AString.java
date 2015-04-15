@@ -46,8 +46,9 @@ public class AString {
 	 * @param expression
 	 * @return
 	 */
-	public static final Matcher<String> matchingExpression(final String expression){
-		if(expression == null || expression.trim().length() == 0){
+	public static final Matcher<String> matchingExpression(String expression){
+		expression = expression==null?null:expression.trim();
+		if(expression == null || expression.length() == 0){
 			return equalToAnything();
 		}
 		return ExpressionParser.parse(expression, new StringMatcherBuilderCallback());
