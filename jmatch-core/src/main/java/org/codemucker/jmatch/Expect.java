@@ -238,6 +238,14 @@ public class Expect {
 			super(actual);
 		}
 
+		public void isTrue() {
+			is(true);
+		}
+
+		public void isFalse() {
+			is(false);
+		}
+
 		public void is(boolean expect) {
 			super.is(ABool.equalTo(expect));
 		}
