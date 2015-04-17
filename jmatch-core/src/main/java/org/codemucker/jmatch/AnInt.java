@@ -2,18 +2,23 @@ package org.codemucker.jmatch;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class AnInt { //extends Logical {
+public class AnInt {
 
-	public static Matcher<Integer> equalTo(final int require) {
-		return new AbstractNotNullMatcher<Integer>() {
+	public static Matcher<Integer> equalTo(final Integer require) {
+		return new AbstractMatcher<Integer>() {
 			@Override
 			public boolean matchesSafely(Integer found,MatchDiagnostics diag) {
-				return found.intValue() == require;
+				if(found == null){
+					return require == null;
+				}
+				if(require == null){
+					return false;
+				}
+				return found.intValue() == require.intValue();
 			}
 			
 			@Override
 			public void describeTo(Description desc) {
-				//super.describeTo(desc);
 				desc.text("an int equal to " + require);
 			}
 		};
@@ -28,7 +33,6 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				//super.describeTo(desc);
 				desc.text("an int > " + require);
 			}
 		};
@@ -42,7 +46,6 @@ public class AnInt { //extends Logical {
 			}
 			@Override
 			public void describeTo(Description desc) {
-				//super.describeTo(desc);
 				desc.text("an int >= " + require);
 			}
 		};
@@ -57,7 +60,6 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				//super.describeTo(desc);
 				desc.text("an int < " + require);
 			}
 		};
@@ -72,7 +74,6 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				//super.describeTo(desc);
 				desc.text("an int <= " + require);
 			}
 		};
@@ -90,7 +91,6 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				//super.describeTo(desc);
 				desc.text("an int between (inclusive) %d >= val <= %d", from, to);
 			}
 		};
@@ -108,7 +108,6 @@ public class AnInt { //extends Logical {
 			
 			@Override
 			public void describeTo(Description desc) {
-				//super.describeTo(desc);
 				desc.text("an int between (exclusive) %d > val < %d", from, to);
 			}
 		};
