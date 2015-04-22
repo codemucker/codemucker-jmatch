@@ -170,6 +170,10 @@ public class Expect {
 			is(AnInstance.equalTo(expect));
 		}
 
+		public void isNull() {
+			is(AnInstance.equalToNull());
+		}
+		
 		public void isNotNull() {
 			is(AnInstance.notNull());
 		}
