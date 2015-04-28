@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>codemucker-jmatch</artifactId>
 	<packaging>jar</packaging>
-	<name>com.codemucker - JMatch</name>
+	<name>com.codemucker - JMatch - Core</name>
 	<description>Matchers</description>
 
 	<dependencies>
