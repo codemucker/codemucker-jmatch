@@ -1,0 +1,51 @@
+# example:  type[name=*.Builder && public && !abstract && method=method[] ]
+
+MATCHERS    = LWSP MATCHER *(LWSP (AND/OR) LWSP MATCHER) LWSP       ;
+MATCHER     = MTYPE LWSP "[" LWSP EXPR LWSP "]"                     ;
+MTYPE       = "method" / "type" / "field"                           ; # MATCHER type
+EXPR        = (FILTERS / GFILTERS) *( LWSP (AND/OR) LWSP (FILTERS/GFILTERS)) ; # MATCHER expression
+GFILTERS    = GOPEN LWSP FILTERS LWSP GCLOSE                        ; # grouped FILTERS
+FILTERS     = FILTER LWSP *( LWSP  (AND/OR) LWSP FILTER)            ; # number of FILTERS
+FILTER      = (ATTNAME LWSP (EQ/NOT_EQ/LESS/GREATER/LESS_EQ/GREATER_EQ) LWSP ATTVALEXPR) / (LWSP [NOT] LWSP ATTNAME);
+ATTNAME     = ALPHA *ALPHANUM                                       ;
+ATTVALEXPR  = ATTVAL LWSP *(LWSP PLUS LWSP ATTVAL)                  ;
+ATTVAL      = RANGE / BOOL / INTVAL / NULL / QVAL / IVAL / VAREXPR / ANTEXPR ; 
+INTVAL      = 0*1("-"/"+") 1*10DIGIT                                                ; # integer value
+QVAL        = (DQUOTE *(VCHAR_MD/WSP) DQUOTE) / (SQUOTE *(VCHAR_MS/WSP) SQUOTE)       ; # quoted text
+IVAL        = ANTEXPR VAREXPR ANTEXPR *(ANTEXPR VAREXPR ANTEXPR)    ; # interpolated value
+ANTEXPR     = *("*" / "?" / "." / ALPHANUM)                         ; # ANT expression
+VAREXPR     = "${" VARNAME "}"                                      ; # variable expression
+VARNAME     = 1*(ALPHANUM / "." / "-" / "_" / ":" )                 ; # variable name
+QCHAR       = VCHAR / WSP                                           ; # quoted CHAR
+#SCHAR       = "_" / "-" / "<" / ">" / "(" / ")" / "[" / "]" / "{" / "}" / "," / "." / ":" / ";" / "%" / "^" / "*" / "#" / "@" / "!" / "?" / "$" / "+"; # special CHAR
+GOPEN       = "("                                                   ; # group start
+GCLOSE      = ")"                                                   ; # group end
+
+RANGE       = 1*DIGIT LWSP ".." LWSP 1*DIGIT                        ; # number range x..y
+BOOL        = "true" / "false"                                      ;
+NULL        = "null"                                                ;
+ALPHANUM    = ALPHA / DIGIT                                         ; # a-z 0-9
+CHAR        = %x01-7F                                               ; # any 7-bit US-ASCII character, excluding NULL
+VCHAR_MD     = %x21 / %x23-7E                                       ; # visible (printing) characters minus '"'
+VCHAR_MS     = %x21-26 / %x28-7E                                     ; # visible (printing) characters minus "'"
+VCHAR       = %x21-7E                                               ; # visible (printing) characters
+ALPHA       = %x41-5A / %x61-7A                                     ; # A-Z  /  a-z
+DIGIT       = %x30-39                                               ; # 0-9 
+LWSP        = * WSP                                                 ; 
+WSP         = %x20                                                  ; # space
+WSP         =/ %x09                                                 ; # horizontal tab
+WSP         =/ %x0D %x0A                                            ; # cr lf
+WSP         =/ %x0A                                                 ; # lf
+DQUOTE      = %x22                                                  ; # " (Double Quote)
+SQUOTE      = %x27                                                  ; # ' (Single Quote)
+OR          = "||"                                                  ; 
+AND         =  "&&"                                                 ; 
+NOT         = "!"                                                   ;  
+NOT_EQ      = "!="                                                  ; 
+LESS        = "<"                                                   ;
+GREATER     = ">"                                                   ;
+LESS_EQ     = "<="                                                  ;
+GREATER_EQ  = ">="                                                  ;
+EQ          = "="                                                   ; 
+PLUS        = "+"                                                   ; 
+NEG    = "-"                                                        ;   
