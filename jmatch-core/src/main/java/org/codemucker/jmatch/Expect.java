@@ -125,6 +125,11 @@ public class Expect {
 	 */
 	public class MatchOptions {
 
+		public MatchOptions debugEnabled() {
+			debugEnabled(true);
+			return this;
+		}
+		
 		public MatchOptions debugEnabled(boolean enabled) {
 			debugEnabled = enabled;
 			return this;
