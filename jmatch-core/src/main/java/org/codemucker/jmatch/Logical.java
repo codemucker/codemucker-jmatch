@@ -54,14 +54,6 @@ public class Logical {
     	return new MatchAllMatcher<T>(matchers);
     }
 
-	/**
-     * Synonym for {@link #or(Matcher...)}
-     */
-    @SafeVarargs
-    public static <T> Matcher<T> either(final Matcher<T>... matchers) {
-    	return or(matchers);
-    }
-
     @SuppressWarnings("unchecked")
     public static <T> Matcher<T> anyIfNull(Matcher<T> matcher) {
     	return matcher!=null?matcher:(Matcher<T>) MATCHER_ANY;
@@ -88,19 +80,24 @@ public class Logical {
      */
     @SafeVarargs
     public static <T> Matcher<T> any(final Matcher<T>... matchers) {
-    	return or(matchers);
+    	return atLeastOne(matchers);
     }
     
     public static <TList extends Iterable<Matcher<T>>,T> Matcher<T> any(final TList matchers) {
-    	return or(matchers);
+    	return atLeastOne(matchers);
     }
     
+    /**
+     * Match at least one of
+     * @param matchers
+     * @return
+     */
     @SafeVarargs
-	public static <T> Matcher<T> or(final Matcher<T>... matchers) {
+	public static <T> Matcher<T> atLeastOne(final Matcher<T>... matchers) {
     	return new MatchAnyMatcher<T>(matchers);
     }
 	
-	public static <TList extends Iterable<Matcher<T>>,T> Matcher<T> or(final TList matchers) {
+	public static <TList extends Iterable<Matcher<T>>,T> Matcher<T> atLeastOne(final TList matchers) {
     	return new MatchAnyMatcher<T>(matchers);
     }
 	
