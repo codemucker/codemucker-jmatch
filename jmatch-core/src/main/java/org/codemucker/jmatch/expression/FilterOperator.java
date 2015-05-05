@@ -1,6 +1,6 @@
 package org.codemucker.jmatch.expression;
 
-enum MatchOperator {
+enum FilterOperator {
 	
 	EQ("=",strings("IsEqualTo", "EqualTo", "Equals", "Is", "of"),0,2),
 	NOT_EQ("!=",strings("IsNot","IsEqualTo", "NotEqualTo", "Not"),0,2), 
@@ -17,7 +17,7 @@ enum MatchOperator {
 	final int maxArgs;
 	final String symbol;
 	
-	private MatchOperator(String symbol,String[] prefixes,int minArgs,int maxArgs) {
+	private FilterOperator(String symbol,String[] prefixes,int minArgs,int maxArgs) {
 		this.symbol = symbol;
 		this.prefixes = prefixes;
 		this.suffixes = prefixes;

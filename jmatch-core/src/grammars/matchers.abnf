@@ -1,16 +1,17 @@
 # example:  type[name=*.Builder && public && !abstract && method=method[] ]
 
 MATCHERS    = LWSP MATCHER *(LWSP (AND/OR) LWSP MATCHER) LWSP       ;
-MATCHER     = MTYPE LWSP "[" LWSP EXPR LWSP "]"                     ;
-MTYPE       = "method" / "type" / "field"                           ; # MATCHER type
-EXPR        = (FILTERS / GFILTERS) *( LWSP (AND/OR) LWSP (FILTERS/GFILTERS)) ; # MATCHER expression
-GFILTERS    = GOPEN LWSP FILTERS LWSP GCLOSE                        ; # grouped FILTERS
-FILTERS     = FILTER LWSP *( LWSP  (AND/OR) LWSP FILTER)            ; # number of FILTERS
-FILTER      = (ATTNAME LWSP (EQ/NOT_EQ/LESS/GREATER/LESS_EQ/GREATER_EQ) LWSP ATTVALEXPR) / (LWSP [NOT] LWSP ATTNAME);
+MATCHER     = MTYPE LWSP "[" LWSP MEXPR LWSP "]"                    ; 
+MTYPE       = 1*ALPHA                                               ; # MATCHER type e.g. 'method'     
+MEXPR       = FILTERS                                               ; # MATCHER expression
+FILTERS     = (GROUP/AFILTERS) *( LWSP (AND/OR) LWSP [NOT] GOPEN LWSP FILTERS LWSP GCLOSE ) ;
+GROUP       = [NOT] LWSP GOPEN LWSP AFILTERS LWSP GCLOSE                 ;
+AFILTERS    = AFILTER LWSP *( LWSP (AND/OR) LWSP AFILTER)           ; # number of attribute FILTERS e.g  'x=y && !z && y=5'
+AFILTER     = (ATTNAME LWSP (EQ/NOT_EQ/LESS/GREATER/LESS_EQ/GREATER_EQ) LWSP ATTVALEXPR) / (LWSP [NOT] LWSP ATTNAME); # attribute filter. e.g 'x=y' or '!x' or 'x<=3'
 ATTNAME     = ALPHA *ALPHANUM                                       ;
 ATTVALEXPR  = ATTVAL LWSP *(LWSP PLUS LWSP ATTVAL)                  ;
 ATTVAL      = RANGE / BOOL / INTVAL / NULL / QVAL / IVAL / VAREXPR / ANTEXPR ; 
-INTVAL      = 0*1("-"/"+") 1*10DIGIT                                                ; # integer value
+INTVAL      = 0*1("-"/"+") 1*10DIGIT                                                  ; # integer value
 QVAL        = (DQUOTE *(VCHAR_MD/WSP) DQUOTE) / (SQUOTE *(VCHAR_MS/WSP) SQUOTE)       ; # quoted text
 IVAL        = ANTEXPR VAREXPR ANTEXPR *(ANTEXPR VAREXPR ANTEXPR)    ; # interpolated value
 ANTEXPR     = *("*" / "?" / "." / ALPHANUM)                         ; # ANT expression
@@ -48,4 +49,4 @@ LESS_EQ     = "<="                                                  ;
 GREATER_EQ  = ">="                                                  ;
 EQ          = "="                                                   ; 
 PLUS        = "+"                                                   ; 
-NEG    = "-"                                                        ;   
+NEG         = "-"                                                        ;   

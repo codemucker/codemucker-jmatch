@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_FILTER.java
+ * Rule_AFILTER.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Mon May 04 20:57:29 CST 2015
+ * Produced : Wed May 06 08:59:40 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_FILTER extends Rule
+final public class Rule_AFILTER extends Rule
 {
-  public Rule_FILTER(String spelling, ArrayList<Rule> rules)
+  public Rule_AFILTER(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_FILTER extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_FILTER parse(ParserContext context)
+  public static Rule_AFILTER parse(ParserContext context)
   {
-    context.push("FILTER");
+    context.push("AFILTER");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -469,16 +469,16 @@ final public class Rule_FILTER extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_FILTER(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_AFILTER(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("FILTER", parsed);
+    context.pop("AFILTER", parsed);
 
-    return (Rule_FILTER)rule;
+    return (Rule_AFILTER)rule;
   }
 }
 

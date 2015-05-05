@@ -3,7 +3,7 @@
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Mon May 04 20:57:29 CST 2015
+ * Produced : Wed May 06 08:59:40 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -163,10 +163,11 @@ public class Parser
     if (rulename.equalsIgnoreCase("MATCHERS")) rule = Rule_MATCHERS.parse(context);
     else if (rulename.equalsIgnoreCase("MATCHER")) rule = Rule_MATCHER.parse(context);
     else if (rulename.equalsIgnoreCase("MTYPE")) rule = Rule_MTYPE.parse(context);
-    else if (rulename.equalsIgnoreCase("EXPR")) rule = Rule_EXPR.parse(context);
-    else if (rulename.equalsIgnoreCase("GFILTERS")) rule = Rule_GFILTERS.parse(context);
+    else if (rulename.equalsIgnoreCase("MEXPR")) rule = Rule_MEXPR.parse(context);
     else if (rulename.equalsIgnoreCase("FILTERS")) rule = Rule_FILTERS.parse(context);
-    else if (rulename.equalsIgnoreCase("FILTER")) rule = Rule_FILTER.parse(context);
+    else if (rulename.equalsIgnoreCase("GROUP")) rule = Rule_GROUP.parse(context);
+    else if (rulename.equalsIgnoreCase("AFILTERS")) rule = Rule_AFILTERS.parse(context);
+    else if (rulename.equalsIgnoreCase("AFILTER")) rule = Rule_AFILTER.parse(context);
     else if (rulename.equalsIgnoreCase("ATTNAME")) rule = Rule_ATTNAME.parse(context);
     else if (rulename.equalsIgnoreCase("ATTVALEXPR")) rule = Rule_ATTVALEXPR.parse(context);
     else if (rulename.equalsIgnoreCase("ATTVAL")) rule = Rule_ATTVAL.parse(context);

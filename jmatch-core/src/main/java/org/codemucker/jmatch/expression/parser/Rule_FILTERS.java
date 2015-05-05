@@ -3,7 +3,7 @@
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Mon May 04 20:57:29 CST 2015
+ * Produced : Wed May 06 08:59:40 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -44,27 +44,72 @@ final public class Rule_FILTERS extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_FILTER.parse(context);
-          if ((f1 = rule != null))
+          int g1 = context.index;
+          ArrayList<ParserAlternative> as2 = new ArrayList<ParserAlternative>();
+          parsed = false;
           {
-            a1.add(rule, context.index);
-            c1++;
+            int s2 = context.index;
+            ParserAlternative a2 = new ParserAlternative(s2);
+            parsed = true;
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_GROUP.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              as2.add(a2);
+            }
+            context.index = s2;
           }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_LWSP.parse(context);
-          if ((f1 = rule != null))
           {
-            a1.add(rule, context.index);
-            c1++;
+            int s2 = context.index;
+            ParserAlternative a2 = new ParserAlternative(s2);
+            parsed = true;
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_AFILTERS.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              as2.add(a2);
+            }
+            context.index = s2;
           }
+
+          ParserAlternative b = ParserAlternative.getBest(as2);
+
+          parsed = b != null;
+
+          if (parsed)
+          {
+            a1.add(b.rules, b.end);
+            context.index = b.end;
+          }
+
+          f1 = context.index > g1;
+          if (parsed) c1++;
         }
         parsed = c1 == 1;
       }
@@ -190,10 +235,121 @@ final public class Rule_FILTERS extends Rule
             if (parsed)
             {
               boolean f2 = true;
+              @SuppressWarnings("unused")
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_FILTER.parse(context);
+                int g2 = context.index;
+                ArrayList<ParserAlternative> as3 = new ArrayList<ParserAlternative>();
+                parsed = false;
+                {
+                  int s3 = context.index;
+                  ParserAlternative a3 = new ParserAlternative(s3);
+                  parsed = true;
+                  if (parsed)
+                  {
+                    boolean f3 = true;
+                    int c3 = 0;
+                    for (int i3 = 0; i3 < 1 && f3; i3++)
+                    {
+                      Rule rule = Rule_NOT.parse(context);
+                      if ((f3 = rule != null))
+                      {
+                        a3.add(rule, context.index);
+                        c3++;
+                      }
+                    }
+                    parsed = c3 == 1;
+                  }
+                  if (parsed)
+                  {
+                    as3.add(a3);
+                  }
+                  context.index = s3;
+                }
+
+                ParserAlternative b = ParserAlternative.getBest(as3);
+
+                parsed = b != null;
+
+                if (parsed)
+                {
+                  a2.add(b.rules, b.end);
+                  context.index = b.end;
+                }
+
+                f2 = context.index > g2;
+                if (parsed) c2++;
+              }
+              parsed = true;
+            }
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_GOPEN.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_LWSP.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_FILTERS.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_LWSP.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_GCLOSE.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);

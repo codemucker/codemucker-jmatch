@@ -16,7 +16,7 @@ import org.codemucker.lang.BeanNameUtil;
 
 import com.google.common.base.Predicate;
 
-public class MatcherModel {
+class MatcherModel {
 		
 	private static final Set<String> IGNORE_METHODS = toNames(AbstractMatcher.class.getMethods());
 	private final ValueConverter converter;
@@ -60,17 +60,17 @@ public class MatcherModel {
 			}
 			String name = m.getName().toLowerCase();
 			//m.getAnnotation(PropertyAlias.class).operater()/names()
-			for(MatchOperator op:MatchOperator.values()){
-				if(op != MatchOperator.EQ){
+			for(FilterOperator op:FilterOperator.values()){
+				if(op != FilterOperator.EQ){
 					if(prefixMatches(m,name,op) || suffixMatches(m,name,op)){
 						continue methods;
 					}
 				}
 			}
-			if(prefixMatches(m,name, MatchOperator.EQ) || suffixMatches(m,name, MatchOperator.EQ)){
+			if(prefixMatches(m,name, FilterOperator.EQ) || suffixMatches(m,name, FilterOperator.EQ)){
 				continue methods;
 			}
-			addMethod(name, MatchOperator.EQ, m);
+			addMethod(name, FilterOperator.EQ, m);
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class MatcherModel {
 		return matched;
 	}
 	
-	private boolean prefixMatches(Method m, String name, MatchOperator op){
+	private boolean prefixMatches(Method m, String name, FilterOperator op){
 		if (op.prefixes != null) {
 			for (String prefix : op.prefixes) {
 				if (tryStartsWith(prefix, m, name, op)) {// e.g. isLessOrEqualToFoo
@@ -108,7 +108,7 @@ public class MatcherModel {
 		return false;
 	}
 	
-	private boolean suffixMatches(Method m, String name, MatchOperator op){
+	private boolean suffixMatches(Method m, String name, FilterOperator op){
 		if(op.suffixes!=null){
 			for(String suffix:op.suffixes){
 				if(tryEndsWith(suffix,m,name, op)){//e.g. fooLessOrEqualToFoo
@@ -122,7 +122,7 @@ public class MatcherModel {
 		return false;
 	}
 	
-	private boolean tryStartsWith(String expect, Method m, String name, MatchOperator op){
+	private boolean tryStartsWith(String expect, Method m, String name, FilterOperator op){
 		if(name.startsWith(expect)){
 			String propertyName = name.substring(expect.length());
 			addMethod(propertyName, op, m);
@@ -131,7 +131,7 @@ public class MatcherModel {
 		return false;
 	}
 
-	private boolean tryEndsWith(String expect,Method m, String name, MatchOperator op){
+	private boolean tryEndsWith(String expect,Method m, String name, FilterOperator op){
 		if(name.endsWith(expect)){
 			String propertyName = name.substring(0,name.length() - expect.length());
 			addMethod(propertyName, op, m);
@@ -140,24 +140,24 @@ public class MatcherModel {
 		return false;
 	}
 	
-	private void addMethod(String propertyName,MatchOperator op, Method m){
+	private void addMethod(String propertyName,FilterOperator op, Method m){
 		log("adding method:" + m.getDeclaringClass().getSimpleName() + "." + m.getName() + "(" +  m.getParameterCount() +") for " + propertyName + " " + op);
 		getOrCreatePropertyGroup(propertyName).addMethod(op, m);
 	}
 
-	public void filter(Matcher<?> matcher, String propertyName,boolean negate) {
+	public void findMethod(IMethodFoundCallback callback, String propertyName, boolean negate) {
 		try {
-			getPropertyGroup(propertyName).invokeWithNoArg(matcher, negate);
+			getPropertyGroup(propertyName).invokeWithNoArg(callback, negate);
 		} catch (Exception e) {
-			throw new RuntimeException("Error creating filter " + (negate?"!":"") + " '" + propertyName + "' on matcher " + matcher.getClass().getName(),e);
+			callback.onError("Error creating filter " + (negate?"!":"") + " '" + propertyName + "''",e);
 		}
 	}
 
-	public void filter(Matcher<?> matcher, String propertyName, MatchOperator operator, Object methodVal){
+	public void findMethod(IMethodFoundCallback callback, String propertyName, FilterOperator operator, Object methodVal){
 		try{
-			getPropertyGroup(propertyName).invokeWithArg(matcher, operator, methodVal);
+			getPropertyGroup(propertyName).invokeWithArg(callback, operator, methodVal);
 		} catch (Exception e) {
-			throw new RuntimeException("Error creating filter  '" + propertyName + "' " + operator.symbol + " '" + methodVal + "' on matcher " + matcher.getClass().getName(),e);
+			callback.onError("Error creating filter  '" + propertyName + "' " + operator.symbol + " '" + methodVal + "'",e);
 		}
 	}
 	

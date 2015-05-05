@@ -3,7 +3,7 @@
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Mon May 04 20:57:29 CST 2015
+ * Produced : Wed May 06 08:59:40 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -15,10 +15,11 @@ public interface Visitor
   public Object visit(Rule_MATCHERS rule);
   public Object visit(Rule_MATCHER rule);
   public Object visit(Rule_MTYPE rule);
-  public Object visit(Rule_EXPR rule);
-  public Object visit(Rule_GFILTERS rule);
+  public Object visit(Rule_MEXPR rule);
   public Object visit(Rule_FILTERS rule);
-  public Object visit(Rule_FILTER rule);
+  public Object visit(Rule_GROUP rule);
+  public Object visit(Rule_AFILTERS rule);
+  public Object visit(Rule_AFILTER rule);
   public Object visit(Rule_ATTNAME rule);
   public Object visit(Rule_ATTVALEXPR rule);
   public Object visit(Rule_ATTVAL rule);

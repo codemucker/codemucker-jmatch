@@ -3,7 +3,7 @@
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Mon May 04 20:57:29 CST 2015
+ * Produced : Wed May 06 08:59:40 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -52,26 +52,14 @@ public class XmlDisplayer implements Visitor
     return null;
   }
 
-  public Object visit(Rule_EXPR rule)
+  public Object visit(Rule_MEXPR rule)
   {
     if (!terminal) System.out.println();
-    System.out.print("<EXPR>");
+    System.out.print("<MEXPR>");
     terminal = false;
     visitRules(rule.rules);
     if (!terminal) System.out.println();
-    System.out.print("</EXPR>");
-    terminal = false;
-    return null;
-  }
-
-  public Object visit(Rule_GFILTERS rule)
-  {
-    if (!terminal) System.out.println();
-    System.out.print("<GFILTERS>");
-    terminal = false;
-    visitRules(rule.rules);
-    if (!terminal) System.out.println();
-    System.out.print("</GFILTERS>");
+    System.out.print("</MEXPR>");
     terminal = false;
     return null;
   }
@@ -88,14 +76,38 @@ public class XmlDisplayer implements Visitor
     return null;
   }
 
-  public Object visit(Rule_FILTER rule)
+  public Object visit(Rule_GROUP rule)
   {
     if (!terminal) System.out.println();
-    System.out.print("<FILTER>");
+    System.out.print("<GROUP>");
     terminal = false;
     visitRules(rule.rules);
     if (!terminal) System.out.println();
-    System.out.print("</FILTER>");
+    System.out.print("</GROUP>");
+    terminal = false;
+    return null;
+  }
+
+  public Object visit(Rule_AFILTERS rule)
+  {
+    if (!terminal) System.out.println();
+    System.out.print("<AFILTERS>");
+    terminal = false;
+    visitRules(rule.rules);
+    if (!terminal) System.out.println();
+    System.out.print("</AFILTERS>");
+    terminal = false;
+    return null;
+  }
+
+  public Object visit(Rule_AFILTER rule)
+  {
+    if (!terminal) System.out.println();
+    System.out.print("<AFILTER>");
+    terminal = false;
+    visitRules(rule.rules);
+    if (!terminal) System.out.println();
+    System.out.print("</AFILTER>");
     terminal = false;
     return null;
   }

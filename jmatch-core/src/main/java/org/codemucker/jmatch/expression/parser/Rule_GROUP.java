@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_GFILTERS.java
+ * Rule_GROUP.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Mon May 04 20:57:29 CST 2015
+ * Produced : Wed May 06 08:59:40 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_GFILTERS extends Rule
+final public class Rule_GROUP extends Rule
 {
-  public Rule_GFILTERS(String spelling, ArrayList<Rule> rules)
+  public Rule_GROUP(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_GFILTERS extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_GFILTERS parse(ParserContext context)
+  public static Rule_GROUP parse(ParserContext context)
   {
-    context.push("GFILTERS");
+    context.push("GROUP");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -38,6 +38,72 @@ final public class Rule_GFILTERS extends Rule
       int s1 = context.index;
       ParserAlternative a1 = new ParserAlternative(s1);
       parsed = true;
+      if (parsed)
+      {
+        boolean f1 = true;
+        @SuppressWarnings("unused")
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          int g1 = context.index;
+          ArrayList<ParserAlternative> as2 = new ArrayList<ParserAlternative>();
+          parsed = false;
+          {
+            int s2 = context.index;
+            ParserAlternative a2 = new ParserAlternative(s2);
+            parsed = true;
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 1 && f2; i2++)
+              {
+                Rule rule = Rule_NOT.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              as2.add(a2);
+            }
+            context.index = s2;
+          }
+
+          ParserAlternative b = ParserAlternative.getBest(as2);
+
+          parsed = b != null;
+
+          if (parsed)
+          {
+            a1.add(b.rules, b.end);
+            context.index = b.end;
+          }
+
+          f1 = context.index > g1;
+          if (parsed) c1++;
+        }
+        parsed = true;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_LWSP.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
       if (parsed)
       {
         boolean f1 = true;
@@ -74,7 +140,7 @@ final public class Rule_GFILTERS extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_FILTERS.parse(context);
+          Rule rule = Rule_AFILTERS.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -133,16 +199,16 @@ final public class Rule_GFILTERS extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_GFILTERS(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_GROUP(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("GFILTERS", parsed);
+    context.pop("GROUP", parsed);
 
-    return (Rule_GFILTERS)rule;
+    return (Rule_GROUP)rule;
   }
 }
 

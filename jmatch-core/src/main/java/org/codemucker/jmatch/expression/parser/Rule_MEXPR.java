@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Rule_ALPHA.java
+ * Rule_MEXPR.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_ALPHA extends Rule
+final public class Rule_MEXPR extends Rule
 {
-  public Rule_ALPHA(String spelling, ArrayList<Rule> rules)
+  public Rule_MEXPR(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_ALPHA extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_ALPHA parse(ParserContext context)
+  public static Rule_MEXPR parse(ParserContext context)
   {
-    context.push("ALPHA");
+    context.push("MEXPR");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,32 +44,7 @@ final public class Rule_ALPHA extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Terminal_NumericValue.parse(context, "%x41-5A", "[\\x41-\\x5A]", 1);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        as1.add(a1);
-      }
-      context.index = s1;
-    }
-    {
-      int s1 = context.index;
-      ParserAlternative a1 = new ParserAlternative(s1);
-      parsed = true;
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Terminal_NumericValue.parse(context, "%x61-7A", "[\\x61-\\x7A]", 1);
+          Rule rule = Rule_FILTERS.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -98,16 +73,16 @@ final public class Rule_ALPHA extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_ALPHA(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_MEXPR(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("ALPHA", parsed);
+    context.pop("MEXPR", parsed);
 
-    return (Rule_ALPHA)rule;
+    return (Rule_MEXPR)rule;
   }
 }
 

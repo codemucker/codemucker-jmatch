@@ -32,7 +32,7 @@ public class MatchAnyMatcher<T> extends AbstractMatcher<T> {
     @Override
     public void describeTo(Description desc) {
         if(matchers.length > 0){
-            desc.values("matching any",matchers);
+            desc.values("matching at least one",matchers);
         } else {
             super.describeTo(desc);
         }

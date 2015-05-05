@@ -1,11 +1,11 @@
 package org.codemucker.jmatch.expression;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.codemucker.jmatch.Matcher;
 
 /**
  * groups a number of methods which all perform the same operation but may take different arguments or have different name (aliases)
@@ -16,10 +16,10 @@ public class MethodOperationGroup {
 	private static final Object[] FALSE_ARG = new Object[]{};
 	
 	private final ValueConverter converter;
-	private final MatchOperator operator;
+	private final FilterOperator operator;
 	private final List<MethodWrapper> methods = new ArrayList<>();
 	
-	public MethodOperationGroup(ValueConverter converter,MatchOperator operator){
+	public MethodOperationGroup(ValueConverter converter,FilterOperator operator){
 		this.operator = operator;
 		this.converter = converter;
 	}
@@ -29,18 +29,18 @@ public class MethodOperationGroup {
 		//m.getAnnotation(PropertyAlias.class)
 		methods.add(new MethodWrapper(converter,m));
 	}
-	
 
-	public void invokeWithNoArg(Matcher<?> matcher) throws Exception {
+
+	public void invokeWithNoArg(IMethodFoundCallback filter) throws Exception {
 		checkArgCount(0);
 		switch(operator){
 			case EQ:
-				if(!tryInvokeWithNoArg(matcher) && !tryInvokeWithArgs(matcher, TRUE_ARG)){
+				if(!tryInvokeWithNoArg(filter) && !tryInvokeWithArgs(filter,TRUE_ARG)){
 					throwNoOperator();
 				}
 				break;
 			case NOT_EQ:
-				if(!tryInvokeWithNoArg(matcher) && !tryInvokeWithArgs(matcher, FALSE_ARG)){
+				if(!tryInvokeWithNoArg(filter) && !tryInvokeWithArgs(filter,FALSE_ARG)){
 					throwNoOperator();
 				}
 				break;
@@ -49,16 +49,16 @@ public class MethodOperationGroup {
 		}
 	}
 	
-	public void invokeWithArg(Matcher<?> matcher, Object val) throws Exception {
+	public void invokeWithArg(IMethodFoundCallback filter,Object val) throws Exception {
 		checkArgCount(1);
-		if(!tryInvokeWithArgs(matcher, new Object[]{val})){
+		if(!tryInvokeWithArgs(filter,new Object[]{val})){
 			throwNoOperator();
 		}
 	}
 
-	public void invokeWithArgs(Matcher<?> matcher, Object leftVal, Object rightVal) throws Exception {
+	public void invokeWithArgs(IMethodFoundCallback filter,Object leftVal, Object rightVal) throws Exception {
 		checkArgCount(2);
-		if(!tryInvokeWithArgs(matcher, new Object[]{leftVal,rightVal})){
+		if(!tryInvokeWithArgs(filter, new Object[]{leftVal,rightVal})){
 			throwNoOperator();
 		}
 	}
@@ -76,37 +76,37 @@ public class MethodOperationGroup {
 		}
 	}
 	
-	private boolean tryInvokeWithNoArg(Matcher<?> matcher) throws Exception {
+	private boolean tryInvokeWithNoArg(IMethodFoundCallback filter) throws Exception {
 		for(MethodOperationGroup.MethodWrapper m:this.methods){
 			if(!m.hasArgs()){
-				m.invokeExact(matcher, NO_ARGS);
+				m.invokeExact(filter, NO_ARGS);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean tryInvokeWithArgs(Matcher<?> matcher, Object[] args) throws Exception {
-		if(tryInvokeWithExactArg(matcher, args)){
+	private boolean tryInvokeWithArgs(IMethodFoundCallback filter,Object[] args) throws Exception {
+		if(tryInvokeWithExactArg(filter,args)){
 			return true;
 		}
-		return tryInvokeWithConvertedArg(matcher,args);
+		return tryInvokeWithConvertedArg(filter,args);
 	}
 
-	private boolean tryInvokeWithExactArg(Matcher<?> matcher,Object[] args) throws Exception {
+	private boolean tryInvokeWithExactArg(IMethodFoundCallback filter,Object[] args) throws Exception {
 		for(MethodOperationGroup.MethodWrapper m:this.methods){
 			if(m.hasArgs() && m.matchArgTypesExact(args)){ //exact match
-				m.invokeExact(matcher, args);
+				m.invokeExact(filter, args);
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	private boolean tryInvokeWithConvertedArg(Matcher<?> matcher,Object[] args) throws Exception {
+	private boolean tryInvokeWithConvertedArg(IMethodFoundCallback filter,Object[] args) throws Exception {
 		for(MethodOperationGroup.MethodWrapper m:this.methods){
 			if(m.hasArgs() && m.matchArgTypesCanConvert(args)){ //exact match
-				m.invokeConverted(matcher, args);
+				m.invokeConverted(filter, args);
 				return true;
 			}
 		}
@@ -118,13 +118,21 @@ public class MethodOperationGroup {
 	 */
 	private static class MethodWrapper {
 		private final ValueConverter converter;
-		private final Method method;
+		final Method method;
 		
 		public MethodWrapper(ValueConverter converter,Method m){
 			this.method = m;
 			this.converter = converter;
 		}
 
+		public boolean isInstance(){
+			return !isStatic();
+		}
+		
+		public boolean isStatic(){
+			return Modifier.isStatic(method.getModifiers());
+		}
+		
 		public boolean hasArgs(){
 			return method.getParameterTypes().length > 0;
 		}
@@ -142,25 +150,22 @@ public class MethodOperationGroup {
 			return true;
 		}
 		
-		public Object invokeExact(Object matcher,Object[] args) throws Exception{
-			return invoke(matcher, args);
+		public void invokeExact(IMethodFoundCallback filter, Object[] args) throws Exception{
+			invoke(filter, args);
 		}
 		
-		public Object invokeConverted(Object matcher,Object[] args) throws Exception {
+		public void invokeConverted(IMethodFoundCallback filter, Object[] args) throws Exception {
 			Class<?>[] paramTypes = method.getParameterTypes();
 			Object[] converted  = new Object[args.length];
 			for(int i = 0; i < args.length;i++){
 				converted[i] = converter.convertTo(args[i], paramTypes[i]);
 			}
-			return invoke(matcher, converted);
+			invoke(filter, converted);
 		}
-		
-		
-		private Object invoke(Object matcher,Object[] args) throws Exception{
-			log("invoking:" + matcher.getClass().getName() + "." + method.getName() + "(" + argsToString(args) + ")");
-			return method.invoke(matcher, args);
+
+		private void invoke(IMethodFoundCallback filter,Object[] args) throws Exception{
+			filter.foundFilterMethod(method, args);
 		}
-		
 		
 		public boolean matchArgTypesCanConvert(Object[] args){
 			Class<?>[] paramTypes = method.getParameterTypes();
@@ -181,27 +186,6 @@ public class MethodOperationGroup {
 			}
 			return ClassUtils.isAssignable(from.getClass(), to);
 		}
-		
-		private static String argsToString(Object[] args){
-			String s = "";
-			if(args!= null){
-				boolean comma = false;
-				for(Object x:args){
-					if(comma){
-						s += ",";
-					}
-					comma = true;
-					s += x;	
-				}
-			}
-			return s;
-		}
-
-		
-		private void log(String msg){
-			System.out.println(getClass().getSimpleName() + ":" + msg);
-		}
-
 
 	}
 }
