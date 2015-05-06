@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_ANTEXPR.java
+ * Rule_ival.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_ANTEXPR extends Rule
+final public class Rule_ival extends Rule
 {
-  public Rule_ANTEXPR(String spelling, ArrayList<Rule> rules)
+  public Rule_ival(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_ANTEXPR extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_ANTEXPR parse(ParserContext context)
+  public static Rule_ival parse(ParserContext context)
   {
-    context.push("ANTEXPR");
+    context.push("ival");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -38,6 +38,51 @@ final public class Rule_ANTEXPR extends Rule
       int s1 = context.index;
       ParserAlternative a1 = new ParserAlternative(s1);
       parsed = true;
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_antexpr.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_varexpr.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_antexpr.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
       if (parsed)
       {
         boolean f1 = true;
@@ -58,7 +103,7 @@ final public class Rule_ANTEXPR extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Terminal_StringValue.parse(context, "*");
+                Rule rule = Rule_antexpr.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -69,21 +114,11 @@ final public class Rule_ANTEXPR extends Rule
             }
             if (parsed)
             {
-              as2.add(a2);
-            }
-            context.index = s2;
-          }
-          {
-            int s2 = context.index;
-            ParserAlternative a2 = new ParserAlternative(s2);
-            parsed = true;
-            if (parsed)
-            {
               boolean f2 = true;
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Terminal_StringValue.parse(context, "?");
+                Rule rule = Rule_varexpr.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -94,46 +129,11 @@ final public class Rule_ANTEXPR extends Rule
             }
             if (parsed)
             {
-              as2.add(a2);
-            }
-            context.index = s2;
-          }
-          {
-            int s2 = context.index;
-            ParserAlternative a2 = new ParserAlternative(s2);
-            parsed = true;
-            if (parsed)
-            {
               boolean f2 = true;
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Terminal_StringValue.parse(context, ".");
-                if ((f2 = rule != null))
-                {
-                  a2.add(rule, context.index);
-                  c2++;
-                }
-              }
-              parsed = c2 == 1;
-            }
-            if (parsed)
-            {
-              as2.add(a2);
-            }
-            context.index = s2;
-          }
-          {
-            int s2 = context.index;
-            ParserAlternative a2 = new ParserAlternative(s2);
-            parsed = true;
-            if (parsed)
-            {
-              boolean f2 = true;
-              int c2 = 0;
-              for (int i2 = 0; i2 < 1 && f2; i2++)
-              {
-                Rule rule = Rule_ALPHANUM.parse(context);
+                Rule rule = Rule_antexpr.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -184,16 +184,16 @@ final public class Rule_ANTEXPR extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_ANTEXPR(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_ival(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("ANTEXPR", parsed);
+    context.pop("ival", parsed);
 
-    return (Rule_ANTEXPR)rule;
+    return (Rule_ival)rule;
   }
 }
 

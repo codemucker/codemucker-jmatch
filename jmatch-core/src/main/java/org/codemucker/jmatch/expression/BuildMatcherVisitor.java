@@ -3,6 +3,7 @@ package org.codemucker.jmatch.expression;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,32 +12,38 @@ import java.util.Stack;
 import org.codemucker.jmatch.Logical;
 import org.codemucker.jmatch.Matcher;
 import org.codemucker.jmatch.expression.parser.Displayer;
-import org.codemucker.jmatch.expression.parser.Rule_AFILTER;
 import org.codemucker.jmatch.expression.parser.Rule_AND;
-import org.codemucker.jmatch.expression.parser.Rule_ANTEXPR;
-import org.codemucker.jmatch.expression.parser.Rule_ATTNAME;
-import org.codemucker.jmatch.expression.parser.Rule_ATTVALEXPR;
 import org.codemucker.jmatch.expression.parser.Rule_EQ;
-import org.codemucker.jmatch.expression.parser.Rule_GCLOSE;
-import org.codemucker.jmatch.expression.parser.Rule_GOPEN;
 import org.codemucker.jmatch.expression.parser.Rule_GREATER;
 import org.codemucker.jmatch.expression.parser.Rule_GREATER_EQ;
-import org.codemucker.jmatch.expression.parser.Rule_INTVAL;
 import org.codemucker.jmatch.expression.parser.Rule_LESS;
 import org.codemucker.jmatch.expression.parser.Rule_LESS_EQ;
-import org.codemucker.jmatch.expression.parser.Rule_MEXPR;
-import org.codemucker.jmatch.expression.parser.Rule_MTYPE;
 import org.codemucker.jmatch.expression.parser.Rule_NEG;
 import org.codemucker.jmatch.expression.parser.Rule_NOT;
 import org.codemucker.jmatch.expression.parser.Rule_NOT_EQ;
+import org.codemucker.jmatch.expression.parser.Rule_NUM;
 import org.codemucker.jmatch.expression.parser.Rule_OR;
-import org.codemucker.jmatch.expression.parser.Rule_QVAL;
-import org.codemucker.jmatch.expression.parser.Rule_VARNAME;
+import org.codemucker.jmatch.expression.parser.Rule_afilter;
+import org.codemucker.jmatch.expression.parser.Rule_antexpr;
+import org.codemucker.jmatch.expression.parser.Rule_attname;
+import org.codemucker.jmatch.expression.parser.Rule_attvalexpr;
+import org.codemucker.jmatch.expression.parser.Rule_datetime;
+import org.codemucker.jmatch.expression.parser.Rule_gclose;
+import org.codemucker.jmatch.expression.parser.Rule_gopen;
+import org.codemucker.jmatch.expression.parser.Rule_mexpr;
+import org.codemucker.jmatch.expression.parser.Rule_mtype;
+import org.codemucker.jmatch.expression.parser.Rule_qval;
+import org.codemucker.jmatch.expression.parser.Rule_range;
+import org.codemucker.jmatch.expression.parser.Rule_rfrom;
+import org.codemucker.jmatch.expression.parser.Rule_rto;
+import org.codemucker.jmatch.expression.parser.Rule_varname;
 import org.codemucker.jmatch.expression.parser.Terminal_NumericValue;
 import org.codemucker.jmatch.expression.parser.Terminal_StringValue;
 
 class BuildMatcherVisitor extends Displayer {
 
+	private static final DateFormats DATE_FORMATS = new DateFormats();
+	
 	private final Models models;
 
 	private boolean negate;
@@ -50,8 +57,8 @@ class BuildMatcherVisitor extends Displayer {
 	private FilterOperator filterOperator;
 	private Object accumulatedFilterVal;
 	
-	private Matcher currentMatcher;
-
+	private Matcher builtMatcher;
+	
 	private Map<String, Object> vars = new HashMap<>();
 	
 	private enum GroupOp {
@@ -68,7 +75,7 @@ class BuildMatcherVisitor extends Displayer {
 	}
 
 	public Matcher<?> getMatcher(){
-		return currentMatcher;
+		return builtMatcher;
 	}
 
 	public void addVar(String name,Object val){
@@ -76,7 +83,7 @@ class BuildMatcherVisitor extends Displayer {
 	}
 
 	@Override
-	public Object visit(Rule_MTYPE rule) {
+	public Object visit(Rule_mtype rule) {
 		String matcherName = rule.spelling.toLowerCase();
 		MatcherModel mapping = models.getModel(matcherName);
 		if(mapping == null){
@@ -98,7 +105,7 @@ class BuildMatcherVisitor extends Displayer {
 	}
 	
 	@Override
-	public Object visit(Rule_MEXPR rule) {
+	public Object visit(Rule_mexpr rule) {
 		startGrouping(currentModel);
 		Object obj = super.visit(rule);
 		endGrouping();
@@ -106,13 +113,13 @@ class BuildMatcherVisitor extends Displayer {
 	}
 
 	@Override
-	public Object visit(Rule_GOPEN rule) {
+	public Object visit(Rule_gopen rule) {
 		startGrouping(currentModel);
 		return super.visit(rule);
 	}
 
 	@Override
-	public Object visit(Rule_GCLOSE rule) {
+	public Object visit(Rule_gclose rule) {
 		//end group
 		endGrouping();
 		return super.visit(rule);
@@ -125,14 +132,14 @@ class BuildMatcherVisitor extends Displayer {
 	private void endGrouping(){
 		Grouping group = groups.pop();
 		if(groups.isEmpty()){
-			currentMatcher = group.toMatcher();
+			builtMatcher = group.toMatcher();
 		} else {
 			//add group we were in to the previous group
 			groups.peek().add(group.toMatcher());
 		}
 	}
 	@Override
-	public Object visit(Rule_AFILTER rule) {
+	public Object visit(Rule_afilter rule) {
 		resetFilter();
 		
 		Object o = super.visit(rule);
@@ -147,20 +154,31 @@ class BuildMatcherVisitor extends Displayer {
 		//TODO:::::::::::  fix the mess below!!!!!::::::::::::::::::::
 		//method[(name=get|name=is)]
 		if(callback.isStaticMethod()){//we're creating a new matcher, so AND/OR it with the current matcher
+			
 			Object obj = callback.invokeMethod(null);
 			if(!(obj instanceof Matcher)){
 				throw new RuntimeException("Expect to return a matcher for statc method:" + callback.describeMethod());
 			}
 			Matcher newMatcher = (Matcher)obj;
-			getOrCreateGrouping().add(newMatcher);
-			//here we group the current matcher group an do an 'and'
+			GroupOp currentOp = getOrCreateGrouping().op;
+			startGrouping(currentModel);
+			setGroupOp(currentOp);
+			getOrCreateGrouping().currentMatcher = newMatcher;
+			endGrouping();
 		} else { //we're adding to existing matcher
+			//just adding to current matcher
 			
-			//e.g.  method[(name=get* || name=is*)]   vs method[name=get*||name=is*&&static]
-  			//just adding to current matcher
-			callback.invokeMethod(getOrCreateGrouping().getMatcher());
+			GroupOp currentOp = getOrCreateGrouping().op;
+			if(currentOp == GroupOp.AND){
+				callback.invokeMethod(getOrCreateGrouping().getMatcher());
+			} else {
+				//have to start a group for it
+				startGrouping(currentModel);
+				setGroupOp(currentOp);
+				callback.invokeMethod(getOrCreateGrouping().getMatcher());
+				endGrouping();
+			}
 		}
-		
 		resetFilter();
 		return o;
 	}
@@ -173,19 +191,19 @@ class BuildMatcherVisitor extends Displayer {
 	}
 
 	@Override
-	public Object visit(Rule_ATTNAME rule) {
+	public Object visit(Rule_attname rule) {
 		filterName = rule.spelling.toLowerCase();			
 		return super.visit(rule);
 	}
 	
 	@Override
-	public Object visit(Rule_ATTVALEXPR rule) {
+	public Object visit(Rule_attvalexpr rule) {
 		
 		return super.visit(rule);
 	}
 
 	@Override
-	public Object visit(Rule_VARNAME rule) {
+	public Object visit(Rule_varname rule) {
 		String varName = rule.spelling;
 		if(!vars.containsKey(varName)){
 			throw new RuntimeException("no variable name '" + varName + "'");
@@ -196,21 +214,73 @@ class BuildMatcherVisitor extends Displayer {
 	}
 	
 	@Override
-	public Object visit(Rule_INTVAL rule) {
-		int val = Integer.parseInt(rule.spelling);
-		appendFilterVal(val);
+	public Object visit(Rule_NUM rule) {
+		appendFilterVal(parseNumber(rule.spelling));
 		return super.visit(rule);
 	};
-	
+
+	@Override
+	public Object visit(Rule_datetime rule) {
+		//force yyy/MM/dd separators to '.'
+		
+		Date d = DATE_FORMATS.parse(rule.spelling);
+		if( d == null){
+			throw new RuntimeException("Could not parse date '" + rule.spelling + "'. No matching format found. Tried " + DATE_FORMATS);
+		}
+		appendFilterVal(d);
+		
+		return null; //no point recursing
+		//return super.visit(rule);
+	}
+
+	@Override
+	public Object visit(Rule_range rule) {
+		accumulatedFilterVal = new Range();
+		return super.visit(rule);
+	}
 	
 	@Override
-	public Object visit(Rule_ANTEXPR rule) {
+	public Object visit(Rule_rfrom rule) {
+		((Range)accumulatedFilterVal).from = parseNumber(rule.spelling);
+		return null;
+	}
+
+	@Override
+	public Object visit(Rule_rto rule) {
+		((Range)accumulatedFilterVal).to = parseNumber(rule.spelling);
+		return null;
+	}
+	
+	private Number parseNumber(String s){
+		if( s.length() > 0){
+			char endsWith = Character.toLowerCase(s.charAt(s.length()-1));
+			switch (endsWith) {
+			case 'f':
+				return Float.parseFloat(s);
+			case 'l':
+				return Long.parseLong(s);
+			case 'd':
+				return Double.parseDouble(s);
+			default:
+				return Integer.parseInt(s);
+			}
+		}
+		return 0;
+	}
+	
+	static class Range {
+		Number from;
+		Number to;
+	}
+	
+	@Override
+	public Object visit(Rule_antexpr rule) {
 		appendFilterVal(rule.spelling);
 		return super.visit(rule);
 	}
 	
 	@Override
-	public Object visit(Rule_QVAL rule) {
+	public Object visit(Rule_qval rule) {
 		String val = rule.spelling;
 		//remove quotes
 		appendFilterVal(val.substring(1, val.length()-1));
@@ -227,7 +297,7 @@ class BuildMatcherVisitor extends Displayer {
 	
 	@Override
 	public Object visit(Rule_OR rule) {
-		currentMatcher = null;
+		builtMatcher = null;
 		setGroupOp(GroupOp.OR);
 		return super.visit(rule);
 	}
@@ -323,12 +393,10 @@ class BuildMatcherVisitor extends Displayer {
 	
 	class MethodFoundCallback implements IMethodFoundCallback {
 		
-		Exception error;
 		Method method;
 		Object[] args;
 		
-		MethodFoundCallback(){
-		}
+		MethodFoundCallback(){}
 		
 		public void foundFilterMethod(Method m, Object[] args){
 			this.method = m;
@@ -339,21 +407,6 @@ class BuildMatcherVisitor extends Displayer {
 			System.out.println(getClass().getSimpleName() + ":" + msg);
 		}
 
-		@Override
-		public void onError(String msg, Exception e) {
-			onError(new RuntimeException(msg,e));
-		}
-		
-		@Override
-		public void onError(Exception e) {
-			this.error = e;
-		}
-
-		public boolean hasError(){
-			return this.error != null;
-		}
-
-		
 		public Object invokeMethod(Matcher matcher){
 			log("invoking:" + describeMethod());
 			try {
@@ -367,16 +420,6 @@ class BuildMatcherVisitor extends Displayer {
 			return Modifier.isStatic(method.getModifiers());
 		}
 
-		public void throwIfError() throws RuntimeException {
-			if(error!=null){
-				if(error instanceof RuntimeException){
-					throw (RuntimeException)error;
-				} else {
-					throw new RuntimeException("wrapped previous error",error);
-				}
-			}
-		}
-		
 		public String describeMethod(){
 			return method.getDeclaringClass().getName() + ":" + method.toGenericString() + ": with args:(" + argsToString(args) + ")" ;
 		}

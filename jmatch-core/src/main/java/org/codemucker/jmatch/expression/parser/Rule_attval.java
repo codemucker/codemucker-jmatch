@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_ATTVAL.java
+ * Rule_attval.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_ATTVAL extends Rule
+final public class Rule_attval extends Rule
 {
-  public Rule_ATTVAL(String spelling, ArrayList<Rule> rules)
+  public Rule_attval(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_ATTVAL extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_ATTVAL parse(ParserContext context)
+  public static Rule_attval parse(ParserContext context)
   {
-    context.push("ATTVAL");
+    context.push("attval");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,7 +44,7 @@ final public class Rule_ATTVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_RANGE.parse(context);
+          Rule rule = Rule_range.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -94,7 +94,7 @@ final public class Rule_ATTVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_INTVAL.parse(context);
+          Rule rule = Rule_NUM.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -144,7 +144,7 @@ final public class Rule_ATTVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_QVAL.parse(context);
+          Rule rule = Rule_qval.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -169,7 +169,7 @@ final public class Rule_ATTVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_IVAL.parse(context);
+          Rule rule = Rule_datetime.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -194,7 +194,7 @@ final public class Rule_ATTVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_VAREXPR.parse(context);
+          Rule rule = Rule_ival.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -219,7 +219,32 @@ final public class Rule_ATTVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_ANTEXPR.parse(context);
+          Rule rule = Rule_varexpr.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        as1.add(a1);
+      }
+      context.index = s1;
+    }
+    {
+      int s1 = context.index;
+      ParserAlternative a1 = new ParserAlternative(s1);
+      parsed = true;
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_antexpr.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -248,16 +273,16 @@ final public class Rule_ATTVAL extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_ATTVAL(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_attval(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("ATTVAL", parsed);
+    context.pop("attval", parsed);
 
-    return (Rule_ATTVAL)rule;
+    return (Rule_attval)rule;
   }
 }
 

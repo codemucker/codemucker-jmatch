@@ -1,11 +1,12 @@
 package org.codemucker.jmatch.expression;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.ClassUtils;
+
+import com.google.common.base.Joiner;
 
 /**
  * groups a number of methods which all perform the same operation but may take different arguments or have different name (aliases)
@@ -31,16 +32,16 @@ public class MethodOperationGroup {
 	}
 
 
-	public void invokeWithNoArg(IMethodFoundCallback filter) throws Exception {
+	public void matchWithNoArg(IMethodFoundCallback filter) throws Exception {
 		checkArgCount(0);
 		switch(operator){
 			case EQ:
-				if(!tryInvokeWithNoArg(filter) && !tryInvokeWithArgs(filter,TRUE_ARG)){
+				if(!tryInvokeWithNoArg(filter) && !tryMatchWithArgs(filter,TRUE_ARG)){
 					throwNoOperator();
 				}
 				break;
 			case NOT_EQ:
-				if(!tryInvokeWithNoArg(filter) && !tryInvokeWithArgs(filter,FALSE_ARG)){
+				if(!tryInvokeWithNoArg(filter) && !tryMatchWithArgs(filter,FALSE_ARG)){
 					throwNoOperator();
 				}
 				break;
@@ -49,16 +50,16 @@ public class MethodOperationGroup {
 		}
 	}
 	
-	public void invokeWithArg(IMethodFoundCallback filter,Object val) throws Exception {
+	public void matchWithArg(IMethodFoundCallback filter,Object val) throws Exception {
 		checkArgCount(1);
-		if(!tryInvokeWithArgs(filter,new Object[]{val})){
+		if(!tryMatchWithArgs(filter,new Object[]{val})){
 			throwNoOperator();
 		}
 	}
 
-	public void invokeWithArgs(IMethodFoundCallback filter,Object leftVal, Object rightVal) throws Exception {
+	public void matchWithArgs(IMethodFoundCallback filter,Object leftVal, Object rightVal) throws Exception {
 		checkArgCount(2);
-		if(!tryInvokeWithArgs(filter, new Object[]{leftVal,rightVal})){
+		if(!tryMatchWithArgs(filter, new Object[]{leftVal,rightVal})){
 			throwNoOperator();
 		}
 	}
@@ -79,38 +80,43 @@ public class MethodOperationGroup {
 	private boolean tryInvokeWithNoArg(IMethodFoundCallback filter) throws Exception {
 		for(MethodOperationGroup.MethodWrapper m:this.methods){
 			if(!m.hasArgs()){
-				m.invokeExact(filter, NO_ARGS);
+				m.matchedWithExact(filter, NO_ARGS);
 				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean tryInvokeWithArgs(IMethodFoundCallback filter,Object[] args) throws Exception {
-		if(tryInvokeWithExactArg(filter,args)){
+	private boolean tryMatchWithArgs(IMethodFoundCallback filter,Object[] args) throws Exception {
+		if(tryMatchWithExactArg(filter,args)){
 			return true;
 		}
-		return tryInvokeWithConvertedArg(filter,args);
+		return tryMatchWithConvertedArg(filter,args);
 	}
 
-	private boolean tryInvokeWithExactArg(IMethodFoundCallback filter,Object[] args) throws Exception {
+	private boolean tryMatchWithExactArg(IMethodFoundCallback filter,Object[] args) throws Exception {
 		for(MethodOperationGroup.MethodWrapper m:this.methods){
-			if(m.hasArgs() && m.matchArgTypesExact(args)){ //exact match
-				m.invokeExact(filter, args);
+			if(m.hasArgs() && m.canArgTypesMatchExactly(args)){ //exact match
+				m.matchedWithExact(filter, args);
 				return true;
 			}
 		}
 		return false;
 	}
 	
-	private boolean tryInvokeWithConvertedArg(IMethodFoundCallback filter,Object[] args) throws Exception {
+	private boolean tryMatchWithConvertedArg(IMethodFoundCallback filter,Object[] args) throws Exception {
 		for(MethodOperationGroup.MethodWrapper m:this.methods){
-			if(m.hasArgs() && m.matchArgTypesCanConvert(args)){ //exact match
-				m.invokeConverted(filter, args);
+			if(m.hasArgs() && m.canArgTypeMatchIfConverted(args)){ //exact match
+				m.matchedWithConverted(filter, args);
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public String toString() {
+		return "[comparison='" + operator.symbol + "',methods=[" + Joiner.on(",").join(methods) + "]]";
 	}
 	
 	/**
@@ -125,19 +131,11 @@ public class MethodOperationGroup {
 			this.converter = converter;
 		}
 
-		public boolean isInstance(){
-			return !isStatic();
-		}
-		
-		public boolean isStatic(){
-			return Modifier.isStatic(method.getModifiers());
-		}
-		
 		public boolean hasArgs(){
 			return method.getParameterTypes().length > 0;
 		}
 		
-		public boolean matchArgTypesExact(Object[] args){
+		public boolean canArgTypesMatchExactly(Object[] args){
 			Class<?>[] paramTypes = method.getParameterTypes();
 			if(args.length != paramTypes.length){
 				return false;
@@ -150,24 +148,7 @@ public class MethodOperationGroup {
 			return true;
 		}
 		
-		public void invokeExact(IMethodFoundCallback filter, Object[] args) throws Exception{
-			invoke(filter, args);
-		}
-		
-		public void invokeConverted(IMethodFoundCallback filter, Object[] args) throws Exception {
-			Class<?>[] paramTypes = method.getParameterTypes();
-			Object[] converted  = new Object[args.length];
-			for(int i = 0; i < args.length;i++){
-				converted[i] = converter.convertTo(args[i], paramTypes[i]);
-			}
-			invoke(filter, converted);
-		}
-
-		private void invoke(IMethodFoundCallback filter,Object[] args) throws Exception{
-			filter.foundFilterMethod(method, args);
-		}
-		
-		public boolean matchArgTypesCanConvert(Object[] args){
+		public boolean canArgTypeMatchIfConverted(Object[] args){
 			Class<?>[] paramTypes = method.getParameterTypes();
 			if(args.length != paramTypes.length){
 				return false;
@@ -180,11 +161,35 @@ public class MethodOperationGroup {
 			return true;
 		}
 		
+		
+		public void matchedWithExact(IMethodFoundCallback filter, Object[] args) throws Exception{
+			matched(filter, args);
+		}
+		
+		public void matchedWithConverted(IMethodFoundCallback filter, Object[] args) throws Exception {
+			Class<?>[] paramTypes = method.getParameterTypes();
+			Object[] converted  = new Object[args.length];
+			for(int i = 0; i < args.length;i++){
+				converted[i] = converter.convertTo(args[i], paramTypes[i]);
+			}
+			matched(filter, converted);
+		}
+
+		private void matched(IMethodFoundCallback filter,Object[] args) throws Exception{
+			filter.foundFilterMethod(method, args);
+		}
+		
+	
 		private boolean argMatchesExactly(Object from, Class<?> to) {
 			if(from == null){
 				return to == String.class;
 			}
 			return ClassUtils.isAssignable(from.getClass(), to);
+		}
+		
+		@Override
+		public String toString() {
+			return method.getName();
 		}
 
 	}

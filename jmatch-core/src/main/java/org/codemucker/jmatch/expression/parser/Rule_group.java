@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_INTVAL.java
+ * Rule_group.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_INTVAL extends Rule
+final public class Rule_group extends Rule
 {
-  public Rule_INTVAL(String spelling, ArrayList<Rule> rules)
+  public Rule_group(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_INTVAL extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_INTVAL parse(ParserContext context)
+  public static Rule_group parse(ParserContext context)
   {
-    context.push("INTVAL");
+    context.push("group");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -58,32 +58,7 @@ final public class Rule_INTVAL extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Terminal_StringValue.parse(context, "-");
-                if ((f2 = rule != null))
-                {
-                  a2.add(rule, context.index);
-                  c2++;
-                }
-              }
-              parsed = c2 == 1;
-            }
-            if (parsed)
-            {
-              as2.add(a2);
-            }
-            context.index = s2;
-          }
-          {
-            int s2 = context.index;
-            ParserAlternative a2 = new ParserAlternative(s2);
-            parsed = true;
-            if (parsed)
-            {
-              boolean f2 = true;
-              int c2 = 0;
-              for (int i2 = 0; i2 < 1 && f2; i2++)
-              {
-                Rule rule = Terminal_StringValue.parse(context, "+");
+                Rule rule = Rule_NOT.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -120,23 +95,89 @@ final public class Rule_INTVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_DIGIT.parse(context);
+          Rule rule = Rule_LWSP.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
             c1++;
           }
         }
-        for (int i1 = 1; i1 < 10 && f1; i1++)
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_DIGIT.parse(context);
+          Rule rule = Rule_gopen.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
             c1++;
           }
         }
-        parsed = c1 >= 1;
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_LWSP.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_afilters.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_LWSP.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_gclose.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
       }
       if (parsed)
       {
@@ -158,16 +199,16 @@ final public class Rule_INTVAL extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_INTVAL(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_group(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("INTVAL", parsed);
+    context.pop("group", parsed);
 
-    return (Rule_INTVAL)rule;
+    return (Rule_group)rule;
   }
 }
 

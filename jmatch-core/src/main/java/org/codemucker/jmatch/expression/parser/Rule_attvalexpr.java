@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_ATTVALEXPR.java
+ * Rule_attvalexpr.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_ATTVALEXPR extends Rule
+final public class Rule_attvalexpr extends Rule
 {
-  public Rule_ATTVALEXPR(String spelling, ArrayList<Rule> rules)
+  public Rule_attvalexpr(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_ATTVALEXPR extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_ATTVALEXPR parse(ParserContext context)
+  public static Rule_attvalexpr parse(ParserContext context)
   {
-    context.push("ATTVALEXPR");
+    context.push("attvalexpr");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,7 +44,7 @@ final public class Rule_ATTVALEXPR extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_ATTVAL.parse(context);
+          Rule rule = Rule_attval.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -133,7 +133,7 @@ final public class Rule_ATTVALEXPR extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_ATTVAL.parse(context);
+                Rule rule = Rule_attval.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -184,16 +184,16 @@ final public class Rule_ATTVALEXPR extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_ATTVALEXPR(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_attvalexpr(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("ATTVALEXPR", parsed);
+    context.pop("attvalexpr", parsed);
 
-    return (Rule_ATTVALEXPR)rule;
+    return (Rule_attvalexpr)rule;
   }
 }
 

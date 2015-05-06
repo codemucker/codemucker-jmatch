@@ -149,7 +149,7 @@ class MatcherModel {
 		try {
 			getPropertyGroup(propertyName).invokeWithNoArg(callback, negate);
 		} catch (Exception e) {
-			callback.onError("Error creating filter " + (negate?"!":"") + " '" + propertyName + "''",e);
+			throw new RuntimeException("Error creating filter " + (negate?"!":"") + " '" + propertyName + "''",e);
 		}
 	}
 
@@ -157,7 +157,7 @@ class MatcherModel {
 		try{
 			getPropertyGroup(propertyName).invokeWithArg(callback, operator, methodVal);
 		} catch (Exception e) {
-			callback.onError("Error creating filter  '" + propertyName + "' " + operator.symbol + " '" + methodVal + "'",e);
+			throw new RuntimeException("Error creating filter  '" + propertyName + "' " + operator.symbol + " '" + methodVal + "'",e);
 		}
 	}
 	

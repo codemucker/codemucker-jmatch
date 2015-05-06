@@ -3,7 +3,7 @@
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -31,7 +31,7 @@ public class Parser
     if (ok)
     {
       arguments.setProperty("Trace", "Off");
-      arguments.setProperty("Rule", "MATCHERS");
+      arguments.setProperty("Rule", "matchers");
 
       for (int i = 0; i < args.length; i++)
       {
@@ -160,38 +160,44 @@ public class Parser
     ParserContext context = new ParserContext(string, trace);
 
     Rule rule = null;
-    if (rulename.equalsIgnoreCase("MATCHERS")) rule = Rule_MATCHERS.parse(context);
-    else if (rulename.equalsIgnoreCase("MATCHER")) rule = Rule_MATCHER.parse(context);
-    else if (rulename.equalsIgnoreCase("MTYPE")) rule = Rule_MTYPE.parse(context);
-    else if (rulename.equalsIgnoreCase("MEXPR")) rule = Rule_MEXPR.parse(context);
-    else if (rulename.equalsIgnoreCase("FILTERS")) rule = Rule_FILTERS.parse(context);
-    else if (rulename.equalsIgnoreCase("GROUP")) rule = Rule_GROUP.parse(context);
-    else if (rulename.equalsIgnoreCase("AFILTERS")) rule = Rule_AFILTERS.parse(context);
-    else if (rulename.equalsIgnoreCase("AFILTER")) rule = Rule_AFILTER.parse(context);
-    else if (rulename.equalsIgnoreCase("ATTNAME")) rule = Rule_ATTNAME.parse(context);
-    else if (rulename.equalsIgnoreCase("ATTVALEXPR")) rule = Rule_ATTVALEXPR.parse(context);
-    else if (rulename.equalsIgnoreCase("ATTVAL")) rule = Rule_ATTVAL.parse(context);
-    else if (rulename.equalsIgnoreCase("INTVAL")) rule = Rule_INTVAL.parse(context);
-    else if (rulename.equalsIgnoreCase("QVAL")) rule = Rule_QVAL.parse(context);
-    else if (rulename.equalsIgnoreCase("IVAL")) rule = Rule_IVAL.parse(context);
-    else if (rulename.equalsIgnoreCase("ANTEXPR")) rule = Rule_ANTEXPR.parse(context);
-    else if (rulename.equalsIgnoreCase("VAREXPR")) rule = Rule_VAREXPR.parse(context);
-    else if (rulename.equalsIgnoreCase("VARNAME")) rule = Rule_VARNAME.parse(context);
-    else if (rulename.equalsIgnoreCase("QCHAR")) rule = Rule_QCHAR.parse(context);
-    else if (rulename.equalsIgnoreCase("GOPEN")) rule = Rule_GOPEN.parse(context);
-    else if (rulename.equalsIgnoreCase("GCLOSE")) rule = Rule_GCLOSE.parse(context);
-    else if (rulename.equalsIgnoreCase("RANGE")) rule = Rule_RANGE.parse(context);
-    else if (rulename.equalsIgnoreCase("BOOL")) rule = Rule_BOOL.parse(context);
-    else if (rulename.equalsIgnoreCase("NULL")) rule = Rule_NULL.parse(context);
-    else if (rulename.equalsIgnoreCase("ALPHANUM")) rule = Rule_ALPHANUM.parse(context);
-    else if (rulename.equalsIgnoreCase("CHAR")) rule = Rule_CHAR.parse(context);
-    else if (rulename.equalsIgnoreCase("VCHAR_MD")) rule = Rule_VCHAR_MD.parse(context);
-    else if (rulename.equalsIgnoreCase("VCHAR_MS")) rule = Rule_VCHAR_MS.parse(context);
-    else if (rulename.equalsIgnoreCase("VCHAR")) rule = Rule_VCHAR.parse(context);
-    else if (rulename.equalsIgnoreCase("ALPHA")) rule = Rule_ALPHA.parse(context);
-    else if (rulename.equalsIgnoreCase("DIGIT")) rule = Rule_DIGIT.parse(context);
-    else if (rulename.equalsIgnoreCase("LWSP")) rule = Rule_LWSP.parse(context);
-    else if (rulename.equalsIgnoreCase("WSP")) rule = Rule_WSP.parse(context);
+    if (rulename.equalsIgnoreCase("matchers")) rule = Rule_matchers.parse(context);
+    else if (rulename.equalsIgnoreCase("matcher")) rule = Rule_matcher.parse(context);
+    else if (rulename.equalsIgnoreCase("mtype")) rule = Rule_mtype.parse(context);
+    else if (rulename.equalsIgnoreCase("mexpr")) rule = Rule_mexpr.parse(context);
+    else if (rulename.equalsIgnoreCase("filter")) rule = Rule_filter.parse(context);
+    else if (rulename.equalsIgnoreCase("group")) rule = Rule_group.parse(context);
+    else if (rulename.equalsIgnoreCase("afilters")) rule = Rule_afilters.parse(context);
+    else if (rulename.equalsIgnoreCase("afilter")) rule = Rule_afilter.parse(context);
+    else if (rulename.equalsIgnoreCase("attname")) rule = Rule_attname.parse(context);
+    else if (rulename.equalsIgnoreCase("attvalexpr")) rule = Rule_attvalexpr.parse(context);
+    else if (rulename.equalsIgnoreCase("attval")) rule = Rule_attval.parse(context);
+    else if (rulename.equalsIgnoreCase("qval")) rule = Rule_qval.parse(context);
+    else if (rulename.equalsIgnoreCase("ival")) rule = Rule_ival.parse(context);
+    else if (rulename.equalsIgnoreCase("antexpr")) rule = Rule_antexpr.parse(context);
+    else if (rulename.equalsIgnoreCase("varexpr")) rule = Rule_varexpr.parse(context);
+    else if (rulename.equalsIgnoreCase("varname")) rule = Rule_varname.parse(context);
+    else if (rulename.equalsIgnoreCase("range")) rule = Rule_range.parse(context);
+    else if (rulename.equalsIgnoreCase("rfrom")) rule = Rule_rfrom.parse(context);
+    else if (rulename.equalsIgnoreCase("rto")) rule = Rule_rto.parse(context);
+    else if (rulename.equalsIgnoreCase("datetime")) rule = Rule_datetime.parse(context);
+    else if (rulename.equalsIgnoreCase("date")) rule = Rule_date.parse(context);
+    else if (rulename.equalsIgnoreCase("time")) rule = Rule_time.parse(context);
+    else if (rulename.equalsIgnoreCase("tz")) rule = Rule_tz.parse(context);
+    else if (rulename.equalsIgnoreCase("tzoffset")) rule = Rule_tzoffset.parse(context);
+    else if (rulename.equalsIgnoreCase("months")) rule = Rule_months.parse(context);
+    else if (rulename.equalsIgnoreCase("days")) rule = Rule_days.parse(context);
+    else if (rulename.equalsIgnoreCase("hours")) rule = Rule_hours.parse(context);
+    else if (rulename.equalsIgnoreCase("minutes")) rule = Rule_minutes.parse(context);
+    else if (rulename.equalsIgnoreCase("seconds")) rule = Rule_seconds.parse(context);
+    else if (rulename.equalsIgnoreCase("gopen")) rule = Rule_gopen.parse(context);
+    else if (rulename.equalsIgnoreCase("gclose")) rule = Rule_gclose.parse(context);
+    else if (rulename.equalsIgnoreCase("NUM")) rule = Rule_NUM.parse(context);
+    else if (rulename.equalsIgnoreCase("FLOAT")) rule = Rule_FLOAT.parse(context);
+    else if (rulename.equalsIgnoreCase("LONG")) rule = Rule_LONG.parse(context);
+    else if (rulename.equalsIgnoreCase("DOUBLE")) rule = Rule_DOUBLE.parse(context);
+    else if (rulename.equalsIgnoreCase("BINARY")) rule = Rule_BINARY.parse(context);
+    else if (rulename.equalsIgnoreCase("HEX")) rule = Rule_HEX.parse(context);
+    else if (rulename.equalsIgnoreCase("SIGN")) rule = Rule_SIGN.parse(context);
     else if (rulename.equalsIgnoreCase("DQUOTE")) rule = Rule_DQUOTE.parse(context);
     else if (rulename.equalsIgnoreCase("SQUOTE")) rule = Rule_SQUOTE.parse(context);
     else if (rulename.equalsIgnoreCase("OR")) rule = Rule_OR.parse(context);
@@ -205,6 +211,16 @@ public class Parser
     else if (rulename.equalsIgnoreCase("EQ")) rule = Rule_EQ.parse(context);
     else if (rulename.equalsIgnoreCase("PLUS")) rule = Rule_PLUS.parse(context);
     else if (rulename.equalsIgnoreCase("NEG")) rule = Rule_NEG.parse(context);
+    else if (rulename.equalsIgnoreCase("BOOL")) rule = Rule_BOOL.parse(context);
+    else if (rulename.equalsIgnoreCase("NULL")) rule = Rule_NULL.parse(context);
+    else if (rulename.equalsIgnoreCase("ALPHANUM")) rule = Rule_ALPHANUM.parse(context);
+    else if (rulename.equalsIgnoreCase("INT32")) rule = Rule_INT32.parse(context);
+    else if (rulename.equalsIgnoreCase("CHAR")) rule = Rule_CHAR.parse(context);
+    else if (rulename.equalsIgnoreCase("VCHAR")) rule = Rule_VCHAR.parse(context);
+    else if (rulename.equalsIgnoreCase("ALPHA")) rule = Rule_ALPHA.parse(context);
+    else if (rulename.equalsIgnoreCase("DIGIT")) rule = Rule_DIGIT.parse(context);
+    else if (rulename.equalsIgnoreCase("LWSP")) rule = Rule_LWSP.parse(context);
+    else if (rulename.equalsIgnoreCase("WSP")) rule = Rule_WSP.parse(context);
     else throw new IllegalArgumentException("unknown rule");
 
     if (rule == null)

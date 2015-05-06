@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_ATTNAME.java
+ * Rule_days.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_ATTNAME extends Rule
+final public class Rule_days extends Rule
 {
-  public Rule_ATTNAME(String spelling, ArrayList<Rule> rules)
+  public Rule_days(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_ATTNAME extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_ATTNAME parse(ParserContext context)
+  public static Rule_days parse(ParserContext context)
   {
-    context.push("ATTNAME");
+    context.push("days");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,7 +44,7 @@ final public class Rule_ATTNAME extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_ALPHA.parse(context);
+          Rule rule = Terminal_NumericValue.parse(context, "%x30-33", "[\\x30-\\x33]", 1);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -56,18 +56,17 @@ final public class Rule_ATTNAME extends Rule
       if (parsed)
       {
         boolean f1 = true;
-        @SuppressWarnings("unused")
         int c1 = 0;
-        while (f1)
+        for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_ALPHANUM.parse(context);
+          Rule rule = Terminal_NumericValue.parse(context, "%x30-39", "[\\x30-\\x39]", 1);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
             c1++;
           }
         }
-        parsed = true;
+        parsed = c1 == 1;
       }
       if (parsed)
       {
@@ -89,16 +88,16 @@ final public class Rule_ATTNAME extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_ATTNAME(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_days(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("ATTNAME", parsed);
+    context.pop("days", parsed);
 
-    return (Rule_ATTNAME)rule;
+    return (Rule_days)rule;
   }
 }
 

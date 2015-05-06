@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_QVAL.java
+ * Rule_qval.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_QVAL extends Rule
+final public class Rule_qval extends Rule
 {
-  public Rule_QVAL(String spelling, ArrayList<Rule> rules)
+  public Rule_qval(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_QVAL extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_QVAL parse(ParserContext context)
+  public static Rule_qval parse(ParserContext context)
   {
-    context.push("QVAL");
+    context.push("qval");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -86,12 +86,72 @@ final public class Rule_QVAL extends Rule
                     int c3 = 0;
                     for (int i3 = 0; i3 < 1 && f3; i3++)
                     {
-                      Rule rule = Rule_VCHAR_MD.parse(context);
-                      if ((f3 = rule != null))
+                      int g3 = context.index;
+                      ArrayList<ParserAlternative> as4 = new ArrayList<ParserAlternative>();
+                      parsed = false;
                       {
-                        a3.add(rule, context.index);
-                        c3++;
+                        int s4 = context.index;
+                        ParserAlternative a4 = new ParserAlternative(s4);
+                        parsed = true;
+                        if (parsed)
+                        {
+                          boolean f4 = true;
+                          int c4 = 0;
+                          for (int i4 = 0; i4 < 1 && f4; i4++)
+                          {
+                            Rule rule = Terminal_NumericValue.parse(context, "%x21", "[\\x21]", 1);
+                            if ((f4 = rule != null))
+                            {
+                              a4.add(rule, context.index);
+                              c4++;
+                            }
+                          }
+                          parsed = c4 == 1;
+                        }
+                        if (parsed)
+                        {
+                          as4.add(a4);
+                        }
+                        context.index = s4;
                       }
+                      {
+                        int s4 = context.index;
+                        ParserAlternative a4 = new ParserAlternative(s4);
+                        parsed = true;
+                        if (parsed)
+                        {
+                          boolean f4 = true;
+                          int c4 = 0;
+                          for (int i4 = 0; i4 < 1 && f4; i4++)
+                          {
+                            Rule rule = Terminal_NumericValue.parse(context, "%x23-7E", "[\\x23-\\x7E]", 1);
+                            if ((f4 = rule != null))
+                            {
+                              a4.add(rule, context.index);
+                              c4++;
+                            }
+                          }
+                          parsed = c4 == 1;
+                        }
+                        if (parsed)
+                        {
+                          as4.add(a4);
+                        }
+                        context.index = s4;
+                      }
+
+                      ParserAlternative b = ParserAlternative.getBest(as4);
+
+                      parsed = b != null;
+
+                      if (parsed)
+                      {
+                        a3.add(b.rules, b.end);
+                        context.index = b.end;
+                      }
+
+                      f3 = context.index > g3;
+                      if (parsed) c3++;
                     }
                     parsed = c3 == 1;
                   }
@@ -237,12 +297,72 @@ final public class Rule_QVAL extends Rule
                     int c3 = 0;
                     for (int i3 = 0; i3 < 1 && f3; i3++)
                     {
-                      Rule rule = Rule_VCHAR_MS.parse(context);
-                      if ((f3 = rule != null))
+                      int g3 = context.index;
+                      ArrayList<ParserAlternative> as4 = new ArrayList<ParserAlternative>();
+                      parsed = false;
                       {
-                        a3.add(rule, context.index);
-                        c3++;
+                        int s4 = context.index;
+                        ParserAlternative a4 = new ParserAlternative(s4);
+                        parsed = true;
+                        if (parsed)
+                        {
+                          boolean f4 = true;
+                          int c4 = 0;
+                          for (int i4 = 0; i4 < 1 && f4; i4++)
+                          {
+                            Rule rule = Terminal_NumericValue.parse(context, "%x21-26", "[\\x21-\\x26]", 1);
+                            if ((f4 = rule != null))
+                            {
+                              a4.add(rule, context.index);
+                              c4++;
+                            }
+                          }
+                          parsed = c4 == 1;
+                        }
+                        if (parsed)
+                        {
+                          as4.add(a4);
+                        }
+                        context.index = s4;
                       }
+                      {
+                        int s4 = context.index;
+                        ParserAlternative a4 = new ParserAlternative(s4);
+                        parsed = true;
+                        if (parsed)
+                        {
+                          boolean f4 = true;
+                          int c4 = 0;
+                          for (int i4 = 0; i4 < 1 && f4; i4++)
+                          {
+                            Rule rule = Terminal_NumericValue.parse(context, "%x28-7E", "[\\x28-\\x7E]", 1);
+                            if ((f4 = rule != null))
+                            {
+                              a4.add(rule, context.index);
+                              c4++;
+                            }
+                          }
+                          parsed = c4 == 1;
+                        }
+                        if (parsed)
+                        {
+                          as4.add(a4);
+                        }
+                        context.index = s4;
+                      }
+
+                      ParserAlternative b = ParserAlternative.getBest(as4);
+
+                      parsed = b != null;
+
+                      if (parsed)
+                      {
+                        a3.add(b.rules, b.end);
+                        context.index = b.end;
+                      }
+
+                      f3 = context.index > g3;
+                      if (parsed) c3++;
                     }
                     parsed = c3 == 1;
                   }
@@ -350,16 +470,16 @@ final public class Rule_QVAL extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_QVAL(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_qval(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("QVAL", parsed);
+    context.pop("qval", parsed);
 
-    return (Rule_QVAL)rule;
+    return (Rule_qval)rule;
   }
 }
 

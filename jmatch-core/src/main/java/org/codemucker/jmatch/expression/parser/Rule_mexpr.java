@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_MTYPE.java
+ * Rule_mexpr.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_MTYPE extends Rule
+final public class Rule_mexpr extends Rule
 {
-  public Rule_MTYPE(String spelling, ArrayList<Rule> rules)
+  public Rule_mexpr(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_MTYPE extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_MTYPE parse(ParserContext context)
+  public static Rule_mexpr parse(ParserContext context)
   {
-    context.push("MTYPE");
+    context.push("mexpr");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,23 +44,14 @@ final public class Rule_MTYPE extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_ALPHA.parse(context);
+          Rule rule = Rule_filter.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
             c1++;
           }
         }
-        while (f1)
-        {
-          Rule rule = Rule_ALPHA.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 >= 1;
+        parsed = c1 == 1;
       }
       if (parsed)
       {
@@ -82,16 +73,16 @@ final public class Rule_MTYPE extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_MTYPE(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_mexpr(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("MTYPE", parsed);
+    context.pop("mexpr", parsed);
 
-    return (Rule_MTYPE)rule;
+    return (Rule_mexpr)rule;
   }
 }
 

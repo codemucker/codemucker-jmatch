@@ -1,12 +1,17 @@
 package org.codemucker.jmatch.expression;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.codemucker.jmatch.AList;
 import org.codemucker.jmatch.AString;
 import org.codemucker.jmatch.AbstractMatcher;
 import org.codemucker.jmatch.Expect;
+import org.codemucker.jmatch.Logical;
 import org.codemucker.jmatch.MatchDiagnostics;
 import org.codemucker.jmatch.Matcher;
 import org.codemucker.jmatch.PropertyMatcher;
@@ -15,88 +20,40 @@ import org.junit.Test;
 public class ExpressionParser2Test {
 
 	@Test
-	public void parseGroups() throws Exception{
-
-		MyTestMatcher2.called.clear();
-		
-		//() || ( )
-		//Matcher<MyObj> matcher = new BuilderMatcherParser().parse(AMyObj.class, "(foo=a && bar=b) || (foo=c && bar = d) || (foo=c && bar = e)");
-		Matcher<MyObj> matcher = new BuilderMatcherParser().parse(AMyObj.class, "(foo=a && bar=b) || (foo=c && (bar = d || bar=e) )");
-
-		Expect
-			.that(new MyObj("a","b"))
-			.is(matcher);
-	
-		Expect
-			.that(new MyObj("c","d"))
-			.is(matcher);
-		
-		Expect
-			.that(new MyObj("c","e"))
-			.is(matcher);
-
-		Expect
-			.that(new MyObj("a","d"))
-			.isNot(matcher);
-	
-		Expect
-			.that(new MyObj("c","b"))
-			.isNot(matcher);
-
-	}
-
-	public static class MyObj {
-		public String foo;
-		public String bar;
-
-		
-		public MyObj(String foo, String bar) {
-			super();
-			this.foo = foo;
-			this.bar = bar;
-		}
-
-		public String getFoo() {
-			return foo;
-		}
-
-		public void setFoo(String foo) {
-			this.foo = foo;
-		}
-
-		public String getBar() {
-			return bar;
-		}
-
-		public void setBar(String bar) {
-			this.bar = bar;
-		}
+	public void datesAndTimes() throws Exception{
+		TestMatcher.called.clear();
+		new BuilderMatcherParser().parse(TestMatcher.class, "mydate=2013.02.08 15:14:13.123 GMT-0200");
+		Expect.that(TestMatcher.called).is(AList.withOnly("mydate:date:2013.02.08 T 17:14:13.123 GMT"));
 	}
 	
-	public static class AMyObj extends PropertyMatcher<MyObj> {
-
-		public AMyObj() {
-			super(MyObj.class);
-		}
-
-		public AMyObj foo(String val){
-			matchProperty("foo",String.class, AString.equalTo(val));
-			return this;
-		}
-		
-		public AMyObj bar(String val){
-			matchProperty("bar",String.class, AString.equalTo(val));
-			return this;
-		}
-		
-	}
 	@Test
-	public void parseAndMethodsCalled() throws Exception{
+	public void singleQuotedChars() throws Exception{
+		TestMatcher.called.clear();
+		new BuilderMatcherParser().parse(TestMatcher.class, "mystring='!\"@#$%^&*()--+=:;<>,.?/|\\~'");
+		Expect.that(TestMatcher.called).is(AList.withOnly("mystring:string:!\"@#$%^&*()--+=:;<>,.?/|\\~"));
+	}
+	
+	@Test
+	public void doubleQuotedChars() throws Exception{
+		TestMatcher.called.clear();
+		new BuilderMatcherParser().parse(TestMatcher.class, "mystring=\"!'@#$%^&*()--+=:;<>,.?/|\\~\"");
+		Expect.that(TestMatcher.called).is(AList.withOnly("mystring:string:!'@#$%^&*()--+=:;<>,.?/|\\~"));
+	}
+	
+	@Test
+	public void concatString() throws Exception{
+		TestMatcher.called.clear();
+		new BuilderMatcherParser().parse(TestMatcher.class, "mystring='\"' + abc + '\"'");
+		Expect.that(TestMatcher.called).is(AList.withOnly("mystring:string:\"abc\""));
+	}
 
-		MyTestMatcher2.called.clear();
-		new BuilderMatcherParser().parse(MyTestMatcher2.class, "foo=123 && foo=-456 && !foo && bar && !foobar && mystring='!@#$%^&*()--+=:;<>,.?/|\\~' && foo > 1 && bar < 2 && foobar > 3");
+	@Test
+	public void comparisonAndFlagFilters() throws Exception{
+
+		TestMatcher.called.clear();
+		new BuilderMatcherParser().parse(TestMatcher.class, "foo=123 && foo=-456 && !foo && bar && !foobar && mystring='!@#$%^&*()--+=:;<>,.?/|\\~' && foo > 1 && bar < 2 && foobar > 3");
 		Expect
-			.that(MyTestMatcher2.called)
+			.that(TestMatcher.called)
 			.is(AList.inOrder()
 				.withOnly("foo:int:123")//converts to int
 				.and("foo:int:-456")//converts to -int
@@ -110,7 +67,7 @@ public class ExpressionParser2Test {
 				;
 	}
 
-	public static class MyTestMatcher2 extends AbstractMatcher<String> {
+	public static class TestMatcher extends AbstractMatcher<String> {
 
 		static List<String> called = new ArrayList<String>();
 
@@ -158,5 +115,111 @@ public class ExpressionParser2Test {
 		public void foobarIsGreaterThan(int val){
 			called.add("foobar>:int:" + val);
 		}
+		
+		public void mydate(Date date){
+			String s = getFormatter().format(date);
+			called.add("mydate:date:" + s);
+		}
+		
+		private DateFormat getFormatter(){
+			SimpleDateFormat df = new SimpleDateFormat("YYY.MM.dd 'T' HH:mm:ss.SSS 'GMT'");
+			df.setTimeZone(TimeZone.getTimeZone("GMT"));
+			return df;
+		}
+		
+		public void mydate(String date){
+			called.add("mydate:string:" + date);
+		}
 	}
+	
+
+	@Test
+	public void groups() throws Exception{
+
+		TestMatcher.called.clear();
+		
+		Matcher<GroupBean> matcher = new BuilderMatcherParser().parse(GroupBeanMatcher.class, "(foo=a && bar=b) || ( foo=c  && (bar = d || bar=e ) )");
+
+		Expect.that(new GroupBean("a", "b")).is(matcher);
+		Expect.that(new GroupBean("c", "d")).is(matcher);
+		Expect.that(new GroupBean("c", "e")).is(matcher);
+		Expect.that(new GroupBean("a", "d")).isNot(matcher);
+		Expect.that(new GroupBean("c", "b")).isNot(matcher);
+
+	}
+	
+	@Test
+	public void groupsDeeplyNested() throws Exception{
+
+		TestMatcher.called.clear();
+		
+		Matcher<GroupBean> matcher = new BuilderMatcherParser().parse(GroupBeanMatcher.class, "(foo=a && bar=b) || ( (foo=c || foo=d)  && (bar = d || (bar=e && foo=d && (bar!=z && foo!=x)) ) )");
+
+		Expect.that(new GroupBean("a", "b")).is(matcher);
+		Expect.that(new GroupBean("c", "d")).is(matcher);
+		Expect.that(new GroupBean("a", "d")).isNot(matcher);
+		Expect.that(new GroupBean("c", "b")).isNot(matcher);
+
+		
+		Expect.that(new GroupBean("d", "e")).is(matcher);
+		Expect.that(new GroupBean("d", "d")).is(matcher);
+		Expect.that(new GroupBean("c", "e")).isNot(matcher);
+	}
+
+	public static class GroupBean {
+		public String foo;
+		public String bar;
+
+		
+		public GroupBean(String foo, String bar) {
+			super();
+			this.foo = foo;
+			this.bar = bar;
+		}
+
+		public String getFoo() {
+			return foo;
+		}
+
+		public void setFoo(String foo) {
+			this.foo = foo;
+		}
+
+		public String getBar() {
+			return bar;
+		}
+
+		public void setBar(String bar) {
+			this.bar = bar;
+		}
+	}
+	
+	public static class GroupBeanMatcher extends PropertyMatcher<GroupBean> {
+
+		public GroupBeanMatcher() {
+			super(GroupBean.class);
+		}
+
+		public GroupBeanMatcher foo(String val){
+			matchProperty("foo",String.class, AString.equalTo(val));
+			return this;
+		}
+		
+		public GroupBeanMatcher notFoo(String val){
+			matchProperty("foo",String.class,Logical.not(AString.equalTo(val)));
+			return this;
+		}
+		
+		public GroupBeanMatcher bar(String val){
+			matchProperty("bar",String.class, AString.equalTo(val));
+			return this;
+		}
+		
+		public GroupBeanMatcher notBar(String val){
+			matchProperty("bar",String.class,Logical.not(AString.equalTo(val)));
+			return this;
+		}
+		
+	}
+	
 }

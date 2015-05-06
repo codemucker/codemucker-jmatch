@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_MATCHER.java
+ * Rule_range.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_MATCHER extends Rule
+final public class Rule_range extends Rule
 {
-  public Rule_MATCHER(String spelling, ArrayList<Rule> rules)
+  public Rule_range(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_MATCHER extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_MATCHER parse(ParserContext context)
+  public static Rule_range parse(ParserContext context)
   {
-    context.push("MATCHER");
+    context.push("range");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,7 +44,7 @@ final public class Rule_MATCHER extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_MTYPE.parse(context);
+          Rule rule = Rule_rfrom.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -74,7 +74,7 @@ final public class Rule_MATCHER extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Terminal_StringValue.parse(context, "[");
+          Rule rule = Terminal_StringValue.parse(context, "..");
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -104,37 +104,7 @@ final public class Rule_MATCHER extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_MEXPR.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_LWSP.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Terminal_StringValue.parse(context, "]");
+          Rule rule = Rule_rto.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -163,16 +133,16 @@ final public class Rule_MATCHER extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_MATCHER(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_range(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("MATCHER", parsed);
+    context.pop("range", parsed);
 
-    return (Rule_MATCHER)rule;
+    return (Rule_range)rule;
   }
 }
 

@@ -13,6 +13,8 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 	private boolean nextIsNeg;
 	private Matcher<T> matcher;
 
+	private float l = 0.0e10f;
+	
 	@Override
 	public void onStart() {
 		onToken("START");

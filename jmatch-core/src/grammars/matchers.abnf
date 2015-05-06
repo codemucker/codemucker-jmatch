@@ -1,52 +1,48 @@
 # example:  type[name=*.Builder && public && !abstract && method=method[] ]
 
-MATCHERS    = LWSP MATCHER *(LWSP (AND/OR) LWSP MATCHER) LWSP       ;
-MATCHER     = MTYPE LWSP "[" LWSP MEXPR LWSP "]"                    ; 
-MTYPE       = 1*ALPHA                                               ; # MATCHER type e.g. 'method'     
-MEXPR       = FILTERS                                               ; # MATCHER expression
-FILTERS     = (GROUP/AFILTERS) *( LWSP (AND/OR) LWSP [NOT] GOPEN LWSP FILTERS LWSP GCLOSE ) ;
-GROUP       = [NOT] LWSP GOPEN LWSP AFILTERS LWSP GCLOSE                 ;
-AFILTERS    = AFILTER LWSP *( LWSP (AND/OR) LWSP AFILTER)           ; # number of attribute FILTERS e.g  'x=y && !z && y=5'
-AFILTER     = (ATTNAME LWSP (EQ/NOT_EQ/LESS/GREATER/LESS_EQ/GREATER_EQ) LWSP ATTVALEXPR) / (LWSP [NOT] LWSP ATTNAME); # attribute filter. e.g 'x=y' or '!x' or 'x<=3'
-ATTNAME     = ALPHA *ALPHANUM                                       ;
-ATTVALEXPR  = ATTVAL LWSP *(LWSP PLUS LWSP ATTVAL)                  ;
-ATTVAL      = RANGE / BOOL / INTVAL / NULL / QVAL / IVAL / VAREXPR / ANTEXPR ; 
-INTVAL      = 0*1("-"/"+") 1*10DIGIT                                                  ; # integer value
-QVAL        = (DQUOTE *(VCHAR_MD/WSP) DQUOTE) / (SQUOTE *(VCHAR_MS/WSP) SQUOTE)       ; # quoted text
-IVAL        = ANTEXPR VAREXPR ANTEXPR *(ANTEXPR VAREXPR ANTEXPR)    ; # interpolated value
-ANTEXPR     = *("*" / "?" / "." / ALPHANUM)                         ; # ANT expression
-VAREXPR     = "${" VARNAME "}"                                      ; # variable expression
-VARNAME     = 1*(ALPHANUM / "." / "-" / "_" / ":" )                 ; # variable name
-QCHAR       = VCHAR / WSP                                           ; # quoted CHAR
-#SCHAR       = "_" / "-" / "<" / ">" / "(" / ")" / "[" / "]" / "{" / "}" / "," / "." / ":" / ";" / "%" / "^" / "*" / "#" / "@" / "!" / "?" / "$" / "+"; # special CHAR
-GOPEN       = "("                                                   ; # group start
-GCLOSE      = ")"                                                   ; # group end
+matchers    = LWSP matcher *(LWSP (AND/OR) LWSP matcher) LWSP       ;
+matcher     = mtype LWSP "[" LWSP mexpr LWSP "]"                    ; 
+mtype       = 1*ALPHA                                               ; # matcher type e.g. 'method'     
+mexpr       = filter                                              ; # matcher expression
+filter      = (group/afilters) *( LWSP (AND/OR) LWSP [NOT] gopen LWSP filter LWSP gclose );
+group       = [NOT] LWSP gopen LWSP afilters LWSP gclose            ;
+afilters    = afilter LWSP *( LWSP (AND/OR) LWSP afilter)           ; # number of attribute filterS e.g  'x=y && !z && y=5'
+afilter     = (attname LWSP (EQ/NOT_EQ/LESS/GREATER/LESS_EQ/GREATER_EQ) LWSP attvalexpr) / (LWSP [NOT] LWSP attname); # attribute filter. e.g 'x=y' or '!x' or 'x<=3'
+attname     = ALPHA *ALPHANUM                                       ;
+attvalexpr  = attval LWSP *(LWSP PLUS LWSP attval)                  ;
+attval      = range / BOOL / NUM / NULL / qval / datetime / ival / varexpr / antexpr ; 
+qval        = (DQUOTE *((%x21 / %x23-7E) / WSP) DQUOTE) / (SQUOTE *((%x21-26 / %x28-7E)/WSP) SQUOTE)       ; # quoted text
+ival        = antexpr varexpr antexpr *(antexpr varexpr antexpr)    ; # interpolated value
+antexpr     = *("*" / "?" / "." / ALPHANUM)                         ; # ANT expression
+varexpr     = "${" varname "}"                                      ; # variable expression
+varname     = 1*(ALPHANUM / "." / "-" / "_" / ":" )                 ; # variable name
 
-RANGE       = 1*DIGIT LWSP ".." LWSP 1*DIGIT                        ; # number range x..y
-BOOL        = "true" / "false"                                      ;
-NULL        = "null"                                                ;
-ALPHANUM    = ALPHA / DIGIT                                         ; # a-z 0-9
-CHAR        = %x01-7F                                               ; # any 7-bit US-ASCII character, excluding NULL
-VCHAR_MD     = %x21 / %x23-7E                                       ; # visible (printing) characters minus '"'
-VCHAR_MS     = %x21-26 / %x28-7E                                     ; # visible (printing) characters minus "'"
-VCHAR       = %x21-7E                                               ; # visible (printing) characters
-ALPHA       = %x41-5A / %x61-7A                                     ; # A-Z  /  a-z
-DIGIT       = %x30-39                                               ; # 0-9 
-LWSP        = * WSP                                                 ; 
-WSP         = %x20                                                  ; # space
-WSP         =/ %x09                                                 ; # horizontal tab
-WSP         =/ %x0D %x0A                                            ; # cr lf
-WSP         =/ %x0A                                                 ; # lf
-DQUOTE      = %x22                                                  ; # " (Double Quote)
-SQUOTE      = %x27                                                  ; # ' (Single Quote)
-OR          = "||"                                                  ; 
-AND         =  "&&"                                                 ; 
-NOT         = "!"                                                   ;  
-NOT_EQ      = "!="                                                  ; 
-LESS        = "<"                                                   ;
-GREATER     = ">"                                                   ;
-LESS_EQ     = "<="                                                  ;
-GREATER_EQ  = ">="                                                  ;
-EQ          = "="                                                   ; 
-PLUS        = "+"                                                   ; 
-NEG         = "-"                                                        ;   
+range       = rfrom LWSP ".." LWSP rto                              ; # number range x..y
+rfrom       = NUM                                                   ;
+rto         = NUM                                                   ;
+datetime    = date [ LWSP ["T"/WSP] LWSP time] [LWSP tz]            ; # datetime yyyy.mm.dd HH:MM:ss SSS TZ
+date        = 1*4DIGIT ("."/"-"/"/") months ("."/"-"/"/") days      ; # date yyyy.mm.dd or yyyy/mm/dd                             ;
+time        = hours ":" minutes ":" seconds ["." 3DIGIT]            ; # time HH:MM:ss.SSS
+tz          = (3ALPHA [LWSP tzoffset] ) / tzoffset                  ; # timezone e.g GMT +02:30
+tzoffset    = SIGN LWSP hours [ [":"] minutes ]                     ; # timezone offset
+months      = %x30-31 %x30-39                                       ; # 0 - 19
+days        = %x30-33 %x30-39                                       ; # 0 - 39
+hours       = (%x30-31 %x30-39) / (%x32 %x30-33)                    ;
+minutes     = %x30-35 %x30-39                                       ;
+seconds     = %x30-35 %x30-39                                       ;
+
+gopen       = "("                                                   ; # group start
+gclose      = ")"                                                   ; # group end
+
+# things which should be standard
+
+# todo:needs some work
+NUM         = [SIGN] (INT32 / FLOAT / LONG / DOUBLE / BINARY / HEX );
+FLOAT       = ((1*18DIGIT) / ( 0*18(DIGIT/".") DIGIT) / ( 1*17(DIGIT/".") "e" ("+"/"-") 1*16DIGIT ) ) "F" ; # do for now
+LONG        = 1*19DIGIT "L"                                         ;
+DOUBLE      = ((1*64DIGIT) / (1*17(DIGIT/".") "e" ("+"/"-") 1*16DIGIT) ) "D"; # do for now
+BINARY      = %x30 "b" 1*(%x30-31 / "_")                            ;
+HEX         = %x30 "x" 1*8DIGIT                                     ;
+SIGN        = "-"/"+"                                               ;
+
+$include "./core.abnf";

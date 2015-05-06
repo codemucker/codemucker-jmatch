@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_MEXPR.java
+ * Rule_months.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_MEXPR extends Rule
+final public class Rule_months extends Rule
 {
-  public Rule_MEXPR(String spelling, ArrayList<Rule> rules)
+  public Rule_months(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_MEXPR extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_MEXPR parse(ParserContext context)
+  public static Rule_months parse(ParserContext context)
   {
-    context.push("MEXPR");
+    context.push("months");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,7 +44,22 @@ final public class Rule_MEXPR extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_FILTERS.parse(context);
+          Rule rule = Terminal_NumericValue.parse(context, "%x30-31", "[\\x30-\\x31]", 1);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Terminal_NumericValue.parse(context, "%x30-39", "[\\x30-\\x39]", 1);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -73,16 +88,16 @@ final public class Rule_MEXPR extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_MEXPR(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_months(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("MEXPR", parsed);
+    context.pop("months", parsed);
 
-    return (Rule_MEXPR)rule;
+    return (Rule_months)rule;
   }
 }
 

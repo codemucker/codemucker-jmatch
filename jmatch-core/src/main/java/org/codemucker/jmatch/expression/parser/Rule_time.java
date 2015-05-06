@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_GROUP.java
+ * Rule_time.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_GROUP extends Rule
+final public class Rule_time extends Rule
 {
-  public Rule_GROUP(String spelling, ArrayList<Rule> rules)
+  public Rule_time(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_GROUP extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_GROUP parse(ParserContext context)
+  public static Rule_time parse(ParserContext context)
   {
-    context.push("GROUP");
+    context.push("time");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -38,6 +38,81 @@ final public class Rule_GROUP extends Rule
       int s1 = context.index;
       ParserAlternative a1 = new ParserAlternative(s1);
       parsed = true;
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_hours.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Terminal_StringValue.parse(context, ":");
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_minutes.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Terminal_StringValue.parse(context, ":");
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_seconds.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
       if (parsed)
       {
         boolean f1 = true;
@@ -58,7 +133,7 @@ final public class Rule_GROUP extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_NOT.parse(context);
+                Rule rule = Terminal_StringValue.parse(context, ".");
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -66,6 +141,21 @@ final public class Rule_GROUP extends Rule
                 }
               }
               parsed = c2 == 1;
+            }
+            if (parsed)
+            {
+              boolean f2 = true;
+              int c2 = 0;
+              for (int i2 = 0; i2 < 3 && f2; i2++)
+              {
+                Rule rule = Rule_DIGIT.parse(context);
+                if ((f2 = rule != null))
+                {
+                  a2.add(rule, context.index);
+                  c2++;
+                }
+              }
+              parsed = c2 == 3;
             }
             if (parsed)
             {
@@ -91,96 +181,6 @@ final public class Rule_GROUP extends Rule
       }
       if (parsed)
       {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_LWSP.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_GOPEN.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_LWSP.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_AFILTERS.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_LWSP.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_GCLOSE.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
         as1.add(a1);
       }
       context.index = s1;
@@ -199,16 +199,16 @@ final public class Rule_GROUP extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_GROUP(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_time(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("GROUP", parsed);
+    context.pop("time", parsed);
 
-    return (Rule_GROUP)rule;
+    return (Rule_time)rule;
   }
 }
 

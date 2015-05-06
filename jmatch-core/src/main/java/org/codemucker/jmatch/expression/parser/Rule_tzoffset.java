@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_IVAL.java
+ * Rule_tzoffset.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_IVAL extends Rule
+final public class Rule_tzoffset extends Rule
 {
-  public Rule_IVAL(String spelling, ArrayList<Rule> rules)
+  public Rule_tzoffset(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_IVAL extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_IVAL parse(ParserContext context)
+  public static Rule_tzoffset parse(ParserContext context)
   {
-    context.push("IVAL");
+    context.push("tzoffset");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,7 +44,7 @@ final public class Rule_IVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_ANTEXPR.parse(context);
+          Rule rule = Rule_SIGN.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -59,7 +59,7 @@ final public class Rule_IVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_VAREXPR.parse(context);
+          Rule rule = Rule_LWSP.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -74,7 +74,7 @@ final public class Rule_IVAL extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_ANTEXPR.parse(context);
+          Rule rule = Rule_hours.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -88,7 +88,7 @@ final public class Rule_IVAL extends Rule
         boolean f1 = true;
         @SuppressWarnings("unused")
         int c1 = 0;
-        while (f1)
+        for (int i1 = 0; i1 < 1 && f1; i1++)
         {
           int g1 = context.index;
           ArrayList<ParserAlternative> as2 = new ArrayList<ParserAlternative>();
@@ -100,17 +100,53 @@ final public class Rule_IVAL extends Rule
             if (parsed)
             {
               boolean f2 = true;
+              @SuppressWarnings("unused")
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_ANTEXPR.parse(context);
-                if ((f2 = rule != null))
+                int g2 = context.index;
+                ArrayList<ParserAlternative> as3 = new ArrayList<ParserAlternative>();
+                parsed = false;
                 {
-                  a2.add(rule, context.index);
-                  c2++;
+                  int s3 = context.index;
+                  ParserAlternative a3 = new ParserAlternative(s3);
+                  parsed = true;
+                  if (parsed)
+                  {
+                    boolean f3 = true;
+                    int c3 = 0;
+                    for (int i3 = 0; i3 < 1 && f3; i3++)
+                    {
+                      Rule rule = Terminal_StringValue.parse(context, ":");
+                      if ((f3 = rule != null))
+                      {
+                        a3.add(rule, context.index);
+                        c3++;
+                      }
+                    }
+                    parsed = c3 == 1;
+                  }
+                  if (parsed)
+                  {
+                    as3.add(a3);
+                  }
+                  context.index = s3;
                 }
+
+                ParserAlternative b = ParserAlternative.getBest(as3);
+
+                parsed = b != null;
+
+                if (parsed)
+                {
+                  a2.add(b.rules, b.end);
+                  context.index = b.end;
+                }
+
+                f2 = context.index > g2;
+                if (parsed) c2++;
               }
-              parsed = c2 == 1;
+              parsed = true;
             }
             if (parsed)
             {
@@ -118,22 +154,7 @@ final public class Rule_IVAL extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_VAREXPR.parse(context);
-                if ((f2 = rule != null))
-                {
-                  a2.add(rule, context.index);
-                  c2++;
-                }
-              }
-              parsed = c2 == 1;
-            }
-            if (parsed)
-            {
-              boolean f2 = true;
-              int c2 = 0;
-              for (int i2 = 0; i2 < 1 && f2; i2++)
-              {
-                Rule rule = Rule_ANTEXPR.parse(context);
+                Rule rule = Rule_minutes.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -184,16 +205,16 @@ final public class Rule_IVAL extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_IVAL(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_tzoffset(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("IVAL", parsed);
+    context.pop("tzoffset", parsed);
 
-    return (Rule_IVAL)rule;
+    return (Rule_tzoffset)rule;
   }
 }
 

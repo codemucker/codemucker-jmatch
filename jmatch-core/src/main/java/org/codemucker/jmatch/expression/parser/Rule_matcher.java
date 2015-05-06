@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_RANGE.java
+ * Rule_matcher.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_RANGE extends Rule
+final public class Rule_matcher extends Rule
 {
-  public Rule_RANGE(String spelling, ArrayList<Rule> rules)
+  public Rule_matcher(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_RANGE extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_RANGE parse(ParserContext context)
+  public static Rule_matcher parse(ParserContext context)
   {
-    context.push("RANGE");
+    context.push("matcher");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,46 +44,7 @@ final public class Rule_RANGE extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_DIGIT.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        while (f1)
-        {
-          Rule rule = Rule_DIGIT.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 >= 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Rule_LWSP.parse(context);
-          if ((f1 = rule != null))
-          {
-            a1.add(rule, context.index);
-            c1++;
-          }
-        }
-        parsed = c1 == 1;
-      }
-      if (parsed)
-      {
-        boolean f1 = true;
-        int c1 = 0;
-        for (int i1 = 0; i1 < 1 && f1; i1++)
-        {
-          Rule rule = Terminal_StringValue.parse(context, "..");
+          Rule rule = Rule_mtype.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -113,23 +74,74 @@ final public class Rule_RANGE extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_DIGIT.parse(context);
+          Rule rule = Terminal_StringValue.parse(context, "[");
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
             c1++;
           }
         }
-        while (f1)
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_DIGIT.parse(context);
+          Rule rule = Rule_LWSP.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
             c1++;
           }
         }
-        parsed = c1 >= 1;
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_mexpr.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Rule_LWSP.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
+      }
+      if (parsed)
+      {
+        boolean f1 = true;
+        int c1 = 0;
+        for (int i1 = 0; i1 < 1 && f1; i1++)
+        {
+          Rule rule = Terminal_StringValue.parse(context, "]");
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 == 1;
       }
       if (parsed)
       {
@@ -151,16 +163,16 @@ final public class Rule_RANGE extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_RANGE(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_matcher(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("RANGE", parsed);
+    context.pop("matcher", parsed);
 
-    return (Rule_RANGE)rule;
+    return (Rule_matcher)rule;
   }
 }
 

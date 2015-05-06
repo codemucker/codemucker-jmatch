@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------------------
- * Rule_NEG.java
+ * Rule_INT32.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_NEG extends Rule
+final public class Rule_INT32 extends Rule
 {
-  public Rule_NEG(String spelling, ArrayList<Rule> rules)
+  public Rule_INT32(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_NEG extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_NEG parse(ParserContext context)
+  public static Rule_INT32 parse(ParserContext context)
   {
-    context.push("NEG");
+    context.push("INT32");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,14 +44,23 @@ final public class Rule_NEG extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Terminal_StringValue.parse(context, "-");
+          Rule rule = Rule_DIGIT.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
             c1++;
           }
         }
-        parsed = c1 == 1;
+        for (int i1 = 1; i1 < 10 && f1; i1++)
+        {
+          Rule rule = Rule_DIGIT.parse(context);
+          if ((f1 = rule != null))
+          {
+            a1.add(rule, context.index);
+            c1++;
+          }
+        }
+        parsed = c1 >= 1;
       }
       if (parsed)
       {
@@ -73,16 +82,16 @@ final public class Rule_NEG extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_NEG(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_INT32(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("NEG", parsed);
+    context.pop("INT32", parsed);
 
-    return (Rule_NEG)rule;
+    return (Rule_INT32)rule;
   }
 }
 

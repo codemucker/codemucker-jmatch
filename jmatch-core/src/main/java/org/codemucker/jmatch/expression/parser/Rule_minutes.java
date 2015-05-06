@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_QCHAR.java
+ * Rule_minutes.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_QCHAR extends Rule
+final public class Rule_minutes extends Rule
 {
-  public Rule_QCHAR(String spelling, ArrayList<Rule> rules)
+  public Rule_minutes(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_QCHAR extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_QCHAR parse(ParserContext context)
+  public static Rule_minutes parse(ParserContext context)
   {
-    context.push("QCHAR");
+    context.push("minutes");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -44,7 +44,7 @@ final public class Rule_QCHAR extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_VCHAR.parse(context);
+          Rule rule = Terminal_NumericValue.parse(context, "%x30-35", "[\\x30-\\x35]", 1);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -55,21 +55,11 @@ final public class Rule_QCHAR extends Rule
       }
       if (parsed)
       {
-        as1.add(a1);
-      }
-      context.index = s1;
-    }
-    {
-      int s1 = context.index;
-      ParserAlternative a1 = new ParserAlternative(s1);
-      parsed = true;
-      if (parsed)
-      {
         boolean f1 = true;
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_WSP.parse(context);
+          Rule rule = Terminal_NumericValue.parse(context, "%x30-39", "[\\x30-\\x39]", 1);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -98,16 +88,16 @@ final public class Rule_QCHAR extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_QCHAR(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_minutes(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("QCHAR", parsed);
+    context.pop("minutes", parsed);
 
-    return (Rule_QCHAR)rule;
+    return (Rule_minutes)rule;
   }
 }
 

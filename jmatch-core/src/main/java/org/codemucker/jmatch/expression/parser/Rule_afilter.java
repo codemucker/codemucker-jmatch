@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_AFILTER.java
+ * Rule_afilter.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_AFILTER extends Rule
+final public class Rule_afilter extends Rule
 {
-  public Rule_AFILTER(String spelling, ArrayList<Rule> rules)
+  public Rule_afilter(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_AFILTER extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_AFILTER parse(ParserContext context)
+  public static Rule_afilter parse(ParserContext context)
   {
-    context.push("AFILTER");
+    context.push("afilter");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -57,7 +57,7 @@ final public class Rule_AFILTER extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_ATTNAME.parse(context);
+                Rule rule = Rule_attname.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -277,7 +277,7 @@ final public class Rule_AFILTER extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_ATTVALEXPR.parse(context);
+                Rule rule = Rule_attvalexpr.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -418,7 +418,7 @@ final public class Rule_AFILTER extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_ATTNAME.parse(context);
+                Rule rule = Rule_attname.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -469,16 +469,16 @@ final public class Rule_AFILTER extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_AFILTER(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_afilter(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("AFILTER", parsed);
+    context.pop("afilter", parsed);
 
-    return (Rule_AFILTER)rule;
+    return (Rule_afilter)rule;
   }
 }
 

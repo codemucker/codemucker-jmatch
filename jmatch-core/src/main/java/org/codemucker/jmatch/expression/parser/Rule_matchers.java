@@ -1,9 +1,9 @@
 /* -----------------------------------------------------------------------------
- * Rule_MATCHERS.java
+ * Rule_matchers.java
  * -----------------------------------------------------------------------------
  *
  * Producer : com.parse2.aparse.Parser 2.5
- * Produced : Wed May 06 08:59:40 CST 2015
+ * Produced : Wed May 06 15:11:14 CST 2015
  *
  * -----------------------------------------------------------------------------
  */
@@ -12,9 +12,9 @@ package org.codemucker.jmatch.expression.parser;
 
 import java.util.ArrayList;
 
-final public class Rule_MATCHERS extends Rule
+final public class Rule_matchers extends Rule
 {
-  public Rule_MATCHERS(String spelling, ArrayList<Rule> rules)
+  public Rule_matchers(String spelling, ArrayList<Rule> rules)
   {
     super(spelling, rules);
   }
@@ -24,9 +24,9 @@ final public class Rule_MATCHERS extends Rule
     return visitor.visit(this);
   }
 
-  public static Rule_MATCHERS parse(ParserContext context)
+  public static Rule_matchers parse(ParserContext context)
   {
-    context.push("MATCHERS");
+    context.push("matchers");
 
     boolean parsed = true;
     int s0 = context.index;
@@ -59,7 +59,7 @@ final public class Rule_MATCHERS extends Rule
         int c1 = 0;
         for (int i1 = 0; i1 < 1 && f1; i1++)
         {
-          Rule rule = Rule_MATCHER.parse(context);
+          Rule rule = Rule_matcher.parse(context);
           if ((f1 = rule != null))
           {
             a1.add(rule, context.index);
@@ -193,7 +193,7 @@ final public class Rule_MATCHERS extends Rule
               int c2 = 0;
               for (int i2 = 0; i2 < 1 && f2; i2++)
               {
-                Rule rule = Rule_MATCHER.parse(context);
+                Rule rule = Rule_matcher.parse(context);
                 if ((f2 = rule != null))
                 {
                   a2.add(rule, context.index);
@@ -259,16 +259,16 @@ final public class Rule_MATCHERS extends Rule
     Rule rule = null;
     if (parsed)
     {
-        rule = new Rule_MATCHERS(context.text.substring(a0.start, a0.end), a0.rules);
+        rule = new Rule_matchers(context.text.substring(a0.start, a0.end), a0.rules);
     }
     else
     {
         context.index = s0;
     }
 
-    context.pop("MATCHERS", parsed);
+    context.pop("matchers", parsed);
 
-    return (Rule_MATCHERS)rule;
+    return (Rule_matchers)rule;
   }
 }
 

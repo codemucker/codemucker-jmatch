@@ -6,8 +6,8 @@ import org.codemucker.jmatch.expression.parser.Rule;
 
 public class BuilderMatcherParser {
 	
-	private static final String RULE_MATCH_EXPRESSION = "MEXPR";
-	private static final String RULE_MATCHERS = "MATCHERS";
+	private static final String RULE_MATCH_EXPRESSION = "mexpr";
+	private static final String RULE_MATCHERS = "matchers";
 	
 	private Models models = new Models();
 
