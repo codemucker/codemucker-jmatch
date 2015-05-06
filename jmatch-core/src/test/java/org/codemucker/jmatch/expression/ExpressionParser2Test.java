@@ -20,7 +20,8 @@ public class ExpressionParser2Test {
 		MyTestMatcher2.called.clear();
 		
 		//() || ( )
-		Matcher<MyObj> matcher = new BuilderMatcherParser().parse(AMyObj.class, "(foo=a && bar=b) || (foo=c && ( bar=d || bar=e ))");
+		//Matcher<MyObj> matcher = new BuilderMatcherParser().parse(AMyObj.class, "(foo=a && bar=b) || (foo=c && bar = d) || (foo=c && bar = e)");
+		Matcher<MyObj> matcher = new BuilderMatcherParser().parse(AMyObj.class, "(foo=a && bar=b) || (foo=c && (bar = d || bar=e) )");
 
 		Expect
 			.that(new MyObj("a","b"))

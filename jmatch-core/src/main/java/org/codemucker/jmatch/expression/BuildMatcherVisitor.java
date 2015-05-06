@@ -15,6 +15,7 @@ import org.codemucker.jmatch.expression.parser.Rule_AFILTER;
 import org.codemucker.jmatch.expression.parser.Rule_AND;
 import org.codemucker.jmatch.expression.parser.Rule_ANTEXPR;
 import org.codemucker.jmatch.expression.parser.Rule_ATTNAME;
+import org.codemucker.jmatch.expression.parser.Rule_ATTVALEXPR;
 import org.codemucker.jmatch.expression.parser.Rule_EQ;
 import org.codemucker.jmatch.expression.parser.Rule_GCLOSE;
 import org.codemucker.jmatch.expression.parser.Rule_GOPEN;
@@ -101,27 +102,9 @@ class BuildMatcherVisitor extends Displayer {
 		startGrouping(currentModel);
 		Object obj = super.visit(rule);
 		endGrouping();
-		
-//		//temp, till we 
-//		while (!groups.isEmpty()) {
-//			Grouping group = groups.pop();
-//			currentMatcher = group.toMatcher();
-//			if (!groups.isEmpty()) {
-//				groups.peek().add(currentMatcher);
-//			}
-//		}
-		
 		return obj;
 	}
-	
-//	@Override
-//	public Object visit(Rule_GROUP rule) {
-//		startGrouping(currentModel);
-//		Object obj =  super.visit(rule);
-//		endGrouping();
-//		return obj;
-//	}
-//	
+
 	@Override
 	public Object visit(Rule_GOPEN rule) {
 		startGrouping(currentModel);
@@ -192,6 +175,12 @@ class BuildMatcherVisitor extends Displayer {
 	@Override
 	public Object visit(Rule_ATTNAME rule) {
 		filterName = rule.spelling.toLowerCase();			
+		return super.visit(rule);
+	}
+	
+	@Override
+	public Object visit(Rule_ATTVALEXPR rule) {
+		
 		return super.visit(rule);
 	}
 
