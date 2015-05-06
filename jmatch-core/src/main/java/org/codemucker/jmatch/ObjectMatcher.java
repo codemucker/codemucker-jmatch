@@ -41,10 +41,18 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 	
 	
 	public void withExpression(String expression){
-		Class<? extends Matcher<T>> matcherClass = (Class<? extends Matcher<T>>) getClass();
-		Matcher<T> matcher = parser.parse(expression, matcherClass);
-		addMatcher(matcher);
+		if(!isBlank(expression)){
+			Class<? extends Matcher<T>> matcherClass = (Class<? extends Matcher<T>>) getClass();
+			Matcher<T> matcher = parser.parse(expression, matcherClass);
+			addMatcher(matcher);
+		}
 	}
+	
+
+    private boolean isBlank(String s){
+    	return s==null || s.trim().length() == 0;
+    }
+    
 	
 	/**
 	 * Match on the given types predicate
