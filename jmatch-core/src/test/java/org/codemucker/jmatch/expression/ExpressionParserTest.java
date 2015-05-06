@@ -22,11 +22,11 @@ public class ExpressionParserTest {
 		"	alice,"+
 		"    bob,"+
 		"   not "+
-		"      matching any:"+
+		"      matching at least one:"+
 		"            not "+
 		"               nick"+
 		"           ,"+
-		"           matching any:"+
+		"           matching at least one:"+
 		"               sam && jim,"+
 		"               matching all:"+
 		"                   kate,"+
