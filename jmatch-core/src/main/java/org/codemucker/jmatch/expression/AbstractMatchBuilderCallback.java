@@ -13,8 +13,6 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 	private boolean nextIsNeg;
 	private Matcher<T> matcher;
 
-	private float l = 0.0e10f;
-	
 	@Override
 	public void onStart() {
 		onToken("START");
@@ -97,13 +95,13 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 		if (g.op == OP.UNKNOWN) {
 			g.op = op;
 		} else if (g.op != op) {
-			throw new ExpressionParser.ParseException("Unexpected '" + op.tokens	+ "', mixing logical operators without groupings is ambiguous (previous operator ' " + g.op.tokens + "'). Use grouping to remove ambiguity");
+			throw new ParseException("Unexpected '" + op.tokens	+ "', mixing logical operators without groupings is ambiguous (previous operator ' " + g.op.tokens + "'). Use grouping to remove ambiguity");
 		}
 	}
 	
 	private void failIfPreviousNegate(){
 		if(nextIsNeg){
-			throw new ExpressionParser.ParseException("Unexpected token after '!'");
+			throw new ParseException("Unexpected token after '!'");
 		}
 	}
 
@@ -170,7 +168,7 @@ public abstract class AbstractMatchBuilderCallback<T> implements ExpressionParse
 				} else if (op == OP.OR) {
 					matcher = Logical.any(matchers);
 				} else {
-					throw new ExpressionParser.ParseException(
+					throw new ParseException(
 							"Don't know what grouping to convert to ");
 				}
 			}

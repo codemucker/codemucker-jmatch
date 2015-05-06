@@ -1,4 +1,4 @@
-package org.codemucker.jmatch.expression;
+package org.codemucker.jmatch.expression.impl;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -51,6 +51,13 @@ public class PropertyGroup {
 		throwIfNull(methods,operator);
 		methods.matchWithArg(callback, val);
 	}
+	
+	public void invokeWithArg(IMethodFoundCallback callback,FilterOperator operator,Object left, Object right) throws Exception {
+		MethodOperationGroup methods = methodGroups.get(operator);
+		throwIfNull(methods,operator);
+		methods.matchWithArgs(callback, left, right);
+	}
+
 
 	private void throwIfNull(MethodOperationGroup group, FilterOperator op){
 		if(group==null){

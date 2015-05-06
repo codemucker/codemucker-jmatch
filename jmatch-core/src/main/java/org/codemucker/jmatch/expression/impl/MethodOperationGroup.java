@@ -1,4 +1,4 @@
-package org.codemucker.jmatch.expression;
+package org.codemucker.jmatch.expression.impl;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -25,6 +25,10 @@ public class MethodOperationGroup {
 		this.converter = converter;
 	}
 	
+	/**
+	 * Add a method which seems to perform the same operation as the other methods in this group (but might provide different args types and conversions)
+	 * @param m
+	 */
 	void addMethod(Method m){
 		//TODO:extract alias methods??
 		//m.getAnnotation(PropertyAlias.class)

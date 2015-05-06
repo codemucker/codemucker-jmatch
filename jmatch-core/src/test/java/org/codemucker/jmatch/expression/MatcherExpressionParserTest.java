@@ -17,41 +17,48 @@ import org.codemucker.jmatch.Matcher;
 import org.codemucker.jmatch.PropertyMatcher;
 import org.junit.Test;
 
-public class ExpressionParser2Test {
+public class MatcherExpressionParserTest {
 
 	@Test
 	public void datesAndTimes() throws Exception{
 		TestMatcher.called.clear();
-		new BuilderMatcherParser().parse(TestMatcher.class, "mydate=2013.02.08 15:14:13.123 GMT-0200");
+		new MatcherExpressionParser().parse("mydate=2013.02.08 15:14:13.123 GMT-0200", TestMatcher.class);
 		Expect.that(TestMatcher.called).is(AList.withOnly("mydate:date:2013.02.08 T 17:14:13.123 GMT"));
 	}
 	
 	@Test
 	public void singleQuotedChars() throws Exception{
 		TestMatcher.called.clear();
-		new BuilderMatcherParser().parse(TestMatcher.class, "mystring='!\"@#$%^&*()--+=:;<>,.?/|\\~'");
+		new MatcherExpressionParser().parse("mystring='!\"@#$%^&*()--+=:;<>,.?/|\\~'", TestMatcher.class);
 		Expect.that(TestMatcher.called).is(AList.withOnly("mystring:string:!\"@#$%^&*()--+=:;<>,.?/|\\~"));
 	}
 	
 	@Test
 	public void doubleQuotedChars() throws Exception{
 		TestMatcher.called.clear();
-		new BuilderMatcherParser().parse(TestMatcher.class, "mystring=\"!'@#$%^&*()--+=:;<>,.?/|\\~\"");
+		new MatcherExpressionParser().parse("mystring=\"!'@#$%^&*()--+=:;<>,.?/|\\~\"", TestMatcher.class);
 		Expect.that(TestMatcher.called).is(AList.withOnly("mystring:string:!'@#$%^&*()--+=:;<>,.?/|\\~"));
 	}
 	
 	@Test
 	public void concatString() throws Exception{
 		TestMatcher.called.clear();
-		new BuilderMatcherParser().parse(TestMatcher.class, "mystring='\"' + abc + '\"'");
+		new MatcherExpressionParser().parse("mystring='\"' + abc + '\"'", TestMatcher.class);
 		Expect.that(TestMatcher.called).is(AList.withOnly("mystring:string:\"abc\""));
+	}
+	
+	@Test
+	public void ranges() throws Exception{
+		TestMatcher.called.clear();
+		new MatcherExpressionParser().parse("myrange=5..8", TestMatcher.class);
+		Expect.that(TestMatcher.called).is(AList.withOnly(AString.matchingExpression("myrange:between:*exclusive*5*>*val*<*8")));
 	}
 
 	@Test
 	public void comparisonAndFlagFilters() throws Exception{
 
 		TestMatcher.called.clear();
-		new BuilderMatcherParser().parse(TestMatcher.class, "foo=123 && foo=-456 && !foo && bar && !foobar && mystring='!@#$%^&*()--+=:;<>,.?/|\\~' && foo > 1 && bar < 2 && foobar > 3");
+		new MatcherExpressionParser().parse("foo=123 && foo=-456 && !foo && bar && !foobar && mystring='!@#$%^&*()--+=:;<>,.?/|\\~' && foo > 1 && bar < 2 && foobar > 3", TestMatcher.class);
 		Expect
 			.that(TestMatcher.called)
 			.is(AList.inOrder()
@@ -130,6 +137,10 @@ public class ExpressionParser2Test {
 		public void mydate(String date){
 			called.add("mydate:string:" + date);
 		}
+		
+		public void myrange(Matcher<Integer> matcher){
+			called.add("myrange:between:" + matcher);
+		}
 	}
 	
 
@@ -138,7 +149,7 @@ public class ExpressionParser2Test {
 
 		TestMatcher.called.clear();
 		
-		Matcher<GroupBean> matcher = new BuilderMatcherParser().parse(GroupBeanMatcher.class, "(foo=a && bar=b) || ( foo=c  && (bar = d || bar=e ) )");
+		Matcher<GroupBean> matcher = new MatcherExpressionParser().parse("(foo=a && bar=b) || ( foo=c  && (bar = d || bar=e ) )", GroupBeanMatcher.class);
 
 		Expect.that(new GroupBean("a", "b")).is(matcher);
 		Expect.that(new GroupBean("c", "d")).is(matcher);
@@ -153,7 +164,7 @@ public class ExpressionParser2Test {
 
 		TestMatcher.called.clear();
 		
-		Matcher<GroupBean> matcher = new BuilderMatcherParser().parse(GroupBeanMatcher.class, "(foo=a && bar=b) || ( (foo=c || foo=d)  && (bar = d || (bar=e && foo=d && (bar!=z && foo!=x)) ) )");
+		Matcher<GroupBean> matcher = new MatcherExpressionParser().parse("(foo=a && bar=b) || ( (foo=c || foo=d)  && (bar = d || (bar=e && foo=d && (bar!=z && foo!=x)) ) )", GroupBeanMatcher.class);
 
 		Expect.that(new GroupBean("a", "b")).is(matcher);
 		Expect.that(new GroupBean("c", "d")).is(matcher);

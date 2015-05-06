@@ -1,4 +1,4 @@
-package org.codemucker.jmatch.expression;
+package org.codemucker.jmatch.expression.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -48,7 +48,8 @@ class MatcherModel {
 			@Override
 			public boolean apply(Method m) {
 				int mod = m.getModifiers();
-				boolean match =  !Modifier.isStatic(mod) && Modifier.isPublic(mod) && !Modifier.isNative(mod) && !Modifier.isAbstract(mod) && m.getParameterTypes().length <= 2;
+				String nameLower = m.getName().toLowerCase();
+				boolean match = !Modifier.isStatic(mod) && Modifier.isPublic(mod) && !Modifier.isNative(mod) && !Modifier.isAbstract(mod) && m.getParameterTypes().length <= 2 && !( nameLower.equals("with") || nameLower.equals("that"));
 				
 				return match;
 			}
@@ -97,10 +98,10 @@ class MatcherModel {
 		return matched;
 	}
 	
-	private boolean prefixMatches(Method m, String name, FilterOperator op){
+	private boolean prefixMatches(Method m, String lowerName, FilterOperator op){
 		if (op.prefixes != null) {
 			for (String prefix : op.prefixes) {
-				if (tryStartsWith(prefix, m, name, op)) {// e.g. isLessOrEqualToFoo
+				if (tryStartsWith(prefix, m, lowerName, op)) {// e.g. isLessOrEqualToFoo
 					return true;
 				}
 			}
@@ -108,13 +109,13 @@ class MatcherModel {
 		return false;
 	}
 	
-	private boolean suffixMatches(Method m, String name, FilterOperator op){
+	private boolean suffixMatches(Method m, String lowerName, FilterOperator op){
 		if(op.suffixes!=null){
 			for(String suffix:op.suffixes){
-				if(tryEndsWith(suffix,m,name, op)){//e.g. fooLessOrEqualToFoo
+				if(tryEndsWith(suffix,m,lowerName, op)){//e.g. fooLessOrEqualToFoo
 					return true;
 				}
-				if(tryEndsWith(suffix,m,"is" + name, op)){//e.g. fooIsLessOrEqualTo
+				if(tryEndsWith(suffix,m,"is" + lowerName, op)){//e.g. fooIsLessOrEqualTo
 					return true;
 				} 
 			}
@@ -122,25 +123,25 @@ class MatcherModel {
 		return false;
 	}
 	
-	private boolean tryStartsWith(String expect, Method m, String name, FilterOperator op){
-		if(name.startsWith(expect)){
-			String propertyName = name.substring(expect.length());
+	private boolean tryStartsWith(String startsWith, Method m, String lowerName, FilterOperator op){
+		if(lowerName.startsWith(startsWith)){
+			String propertyName = lowerName.substring(startsWith.length());
 			addMethod(propertyName, op, m);
 			return true;
 		}
 		return false;
 	}
 
-	private boolean tryEndsWith(String expect,Method m, String name, FilterOperator op){
-		if(name.endsWith(expect)){
-			String propertyName = name.substring(0,name.length() - expect.length());
+	private boolean tryEndsWith(String endsWith,Method m, String lowerName, FilterOperator op){
+		if(lowerName.endsWith(endsWith)){
+			String propertyName = lowerName.substring(0,lowerName.length() - endsWith.length());
 			addMethod(propertyName, op, m);
 			return true;
 		}
 		return false;
 	}
 	
-	private void addMethod(String propertyName,FilterOperator op, Method m){
+	private void addMethod(String propertyName, FilterOperator op, Method m){
 		log("adding method:" + m.getDeclaringClass().getSimpleName() + "." + m.getName() + "(" +  m.getParameterCount() +") for " + propertyName + " " + op);
 		getOrCreatePropertyGroup(propertyName).addMethod(op, m);
 	}
@@ -158,6 +159,14 @@ class MatcherModel {
 			getPropertyGroup(propertyName).invokeWithArg(callback, operator, methodVal);
 		} catch (Exception e) {
 			throw new RuntimeException("Error creating filter  '" + propertyName + "' " + operator.symbol + " '" + methodVal + "'",e);
+		}
+	}
+	
+	public void findMethod(IMethodFoundCallback callback, String propertyName, FilterOperator operator, Object leftArg, Object rightArg){
+		try{
+			getPropertyGroup(propertyName).invokeWithArg(callback, operator, leftArg, rightArg);
+		} catch (Exception e) {
+			throw new RuntimeException("Error creating filter  '" + propertyName + "' " + operator.symbol + " '" + leftArg + "," + rightArg + "'",e);
 		}
 	}
 	

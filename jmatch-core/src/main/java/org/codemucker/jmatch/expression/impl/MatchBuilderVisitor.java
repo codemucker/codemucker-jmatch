@@ -1,16 +1,17 @@
-package org.codemucker.jmatch.expression;
+package org.codemucker.jmatch.expression.impl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import org.codemucker.jmatch.AnInt;
 import org.codemucker.jmatch.Logical;
 import org.codemucker.jmatch.Matcher;
+import org.codemucker.jmatch.expression.ParseException;
 import org.codemucker.jmatch.expression.parser.Displayer;
 import org.codemucker.jmatch.expression.parser.Rule_AND;
 import org.codemucker.jmatch.expression.parser.Rule_EQ;
@@ -40,11 +41,11 @@ import org.codemucker.jmatch.expression.parser.Rule_varname;
 import org.codemucker.jmatch.expression.parser.Terminal_NumericValue;
 import org.codemucker.jmatch.expression.parser.Terminal_StringValue;
 
-class BuildMatcherVisitor extends Displayer {
+public class MatchBuilderVisitor extends Displayer {
 
 	private static final DateFormats DATE_FORMATS = new DateFormats();
 	
-	private final Models models;
+	private final MatcherModels models;
 
 	private boolean negate;
 	private final Stack<Grouping> groups = new Stack<>();
@@ -59,19 +60,21 @@ class BuildMatcherVisitor extends Displayer {
 	
 	private Matcher builtMatcher;
 	
-	private Map<String, Object> vars = new HashMap<>();
+	private final Map<String, Object> vars;
 	
 	private enum GroupOp {
 		UNKNOWN,AND,OR
 	}
 	
-	public BuildMatcherVisitor(Models models){
+	public MatchBuilderVisitor(Map<String, Object> vars,MatcherModels models){
+		this.vars = vars;
 		this.models = models;
 	}
 	
-	public BuildMatcherVisitor(Models models,Class<? extends Matcher<?>> matcherClass){
+	public MatchBuilderVisitor(Map<String, Object> vars,MatcherModels models,Class<? extends Matcher<?>> matcherClass){
+		this.vars = vars;
 		this.models = models;
-		pushModel(new MatcherModel(matcherClass));
+		pushModel(models.getModelByClass(matcherClass));
 	}
 
 	public Matcher<?> getMatcher(){
@@ -85,7 +88,7 @@ class BuildMatcherVisitor extends Displayer {
 	@Override
 	public Object visit(Rule_mtype rule) {
 		String matcherName = rule.spelling.toLowerCase();
-		MatcherModel mapping = models.getModel(matcherName);
+		MatcherModel mapping = models.getModelByName(matcherName);
 		if(mapping == null){
 			throw new RuntimeException("no matcher for:" + matcherName);
 		}
@@ -146,7 +149,13 @@ class BuildMatcherVisitor extends Displayer {
 		//find the method to invoke to create the filter
 		MethodFoundCallback callback = new MethodFoundCallback();
 		if(accumulatedFilterVal != null){
-			currentModel.findMethod(callback,filterName, filterOperator, accumulatedFilterVal);
+			if(accumulatedFilterVal instanceof Range){
+				Range range = (Range)accumulatedFilterVal;
+				//HACK:need to handle all numbers, not just ints
+				currentModel.findMethod(callback,filterName, filterOperator, AnInt.betweenExclusive(range.from.intValue(), range.to.intValue()));
+			} else {
+				currentModel.findMethod(callback,filterName, filterOperator, accumulatedFilterVal);
+			}
 		} else {
 			currentModel.findMethod(callback,filterName,negate);
 		}
@@ -313,7 +322,7 @@ class BuildMatcherVisitor extends Displayer {
 		if (g.op == GroupOp.UNKNOWN) {
 			g.op = op;
 		} else if (g.op != op) {
-			throw new ExpressionParser.ParseException("Unexpected '" + op.name()	+ "', mixing logical operators without groupings is ambiguous. Use grouping to remove ambiguity");
+			throw new ParseException("Unexpected '" + op.name()	+ "', mixing logical operators without groupings is ambiguous. Use grouping to remove ambiguity");
 		}
 	}
 
@@ -482,7 +491,7 @@ class BuildMatcherVisitor extends Displayer {
 				} else if (op == GroupOp.OR) {
 					matcher = Logical.any(matchers);
 				} else {
-					throw new ExpressionParser.ParseException(
+					throw new ParseException(
 							"Don't know what grouping to convert to ");
 				}
 			}
