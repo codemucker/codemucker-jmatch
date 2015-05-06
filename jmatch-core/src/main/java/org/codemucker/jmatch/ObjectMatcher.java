@@ -3,6 +3,8 @@ package org.codemucker.jmatch;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codemucker.jmatch.expression.MatcherExpressionParser;
+
 import com.google.common.base.Predicate;
 
 /***
@@ -14,6 +16,7 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 
 	private final List<Matcher<T>> matchers = new ArrayList<>();
 	private final Class<T> expectType;
+	private static final MatcherExpressionParser parser = new MatcherExpressionParser();
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
     public ObjectMatcher(Class expectType){
@@ -35,7 +38,14 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 		}
 		return true;
 	}
-
+	
+	
+	public void withExpression(String expression){
+		Class<? extends Matcher<T>> matcherClass = (Class<? extends Matcher<T>>) getClass();
+		Matcher<T> matcher = parser.parse(expression, matcherClass);
+		addMatcher(matcher);
+	}
+	
 	/**
 	 * Match on the given types predicate
 	 * 
